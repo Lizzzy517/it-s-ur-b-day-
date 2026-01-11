@@ -242,6 +242,69 @@
       .confetti span{animation:none}
       button,.fate{transition:none}
     }
+    /* ===== Pick FX ===== */
+.fate{ position:relative; }
+
+.fate.dim{
+  opacity:.55;
+  filter:saturate(.85) contrast(.95);
+}
+
+.fate.glow{
+  border-color: rgba(216,178,92,.55);
+  box-shadow:
+    0 0 0 1px rgba(216,178,92,.18),
+    0 18px 45px rgba(0,0,0,.35),
+    0 0 26px rgba(216,178,92,.18),
+    0 0 50px rgba(139,92,246,.12);
+}
+
+.fate.shake{
+  animation: fateShake .55s ease-in-out 1;
+}
+
+@keyframes fateShake{
+  0%   { transform: translate(0,0) rotate(0deg); }
+  15%  { transform: translate(-2px,1px) rotate(-0.8deg); }
+  30%  { transform: translate(3px,-1px) rotate(0.8deg); }
+  45%  { transform: translate(-2px,-1px) rotate(-0.6deg); }
+  60%  { transform: translate(2px,1px) rotate(0.6deg); }
+  100% { transform: translate(0,0) rotate(0deg); }
+}
+
+.fate.revealPulse{
+  animation: revealPulse .9s ease-out 1;
+}
+
+@keyframes revealPulse{
+  0%   { transform: scale(1); }
+  35%  { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+.pickBadge{
+  position:absolute;
+  top:14px;
+  left:14px;
+  padding:6px 10px;
+  border-radius:999px;
+  font-family: var(--mono);
+  font-size:11px;
+  letter-spacing:.6px;
+  text-transform:uppercase;
+  color: rgba(216,178,92,.95);
+  background: rgba(0,0,0,.38);
+  border: 1px solid rgba(216,178,92,.32);
+  box-shadow: 0 12px 28px rgba(0,0,0,.35);
+  pointer-events:none;
+  z-index:3;
+}
+
+/* reduce motion */
+@media (prefers-reduced-motion: reduce){
+  .fate.shake, .fate.revealPulse{ animation:none !important; }
+}
+
   </style>
 </head>
 
@@ -540,6 +603,21 @@
       el("pickedMap").onclick = () => openMap(pickedData.mapUrl);
       el("otherMap").onclick  = () => openMap(otherData.mapUrl);
     }
+function clearPickFX(){
+  [cardA, cardB].forEach(c => {
+    c.classList.remove("dim","glow","shake","revealPulse");
+    const b = c.querySelector(".pickBadge");
+    if (b) b.remove();
+  });
+}
+
+function addPickBadge(which){
+  const pickedEl = which === "A" ? cardA : cardB;
+  const badge = document.createElement("div");
+  badge.className = "pickBadge";
+  badge.textContent = "YOU CHOSE";
+  pickedEl.appendChild(badge);
+}
 
 function onPick(which){
   if (step !== 0) return;

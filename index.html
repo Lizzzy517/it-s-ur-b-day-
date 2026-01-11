@@ -154,7 +154,6 @@ h1{
     }
     *{box-sizing:border-box}
     html,body{height:100%}
-    }
     .wrap{width:min(860px, 100%);}
     .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;opacity:.92;}
     .brand{font-family:var(--mono);font-size:13px;letter-spacing:.3px;color:var(--muted);display:flex;gap:10px;align-items:center;}
@@ -575,30 +574,29 @@ h1{
     }
 
     function onPick(which){
-      if (step !== 0) return;
-      picked = which;
-      step = 1;
+  if (step !== 0) return;
+  picked = which;
+  step = 1;
 
-      setCardDisabled(true);
-      revealGrid.style.display = "block";
-      otherEvent.style.display = "none";
-      msg.style.display = "block";
-      msg.textContent = "命運已決定…\n（先讓我公布你選到的那張🙂）";
-      stepActions.style.display = "flex";
-      finalActions.style.display = "none";
+  setCardDisabled(true);
+  revealGrid.style.display = "block";
+  otherEvent.style.display = "none";
 
-      renderPicked(which);
-      confettiBurst();
+  msg.style.display = "block";
+  msg.textContent = "命運已決定…\n（先讓我公布你選到的那張🙂）";
 
-function startLoadingDots(messagePrefix = "命運讀取中") {
-  let i = 0;
-  const timer = setInterval(() => {
-    const dots = ".".repeat(i % 4); // "", ".", "..", "..."
-    el("msg").style.display = "block";
-    el("msg").textContent = `${messagePrefix}${dots}`;
-    i++;
-  }, 250);
-  return () => clearInterval(timer); // 回傳 stop function
+  stepActions.style.display = "flex";
+  finalActions.style.display = "none";
+
+  renderPicked(which);
+  confettiBurst();
+
+  revealGrid.scrollIntoView({
+    behavior: prefersReduced ? "auto" : "smooth",
+    block: "start"
+  });
+}
+
 }
 
       revealGrid.scrollIntoView({ behavior: prefersReduced ? "auto" : "smooth", block: "start" });

@@ -154,19 +154,6 @@ h1{
     }
     *{box-sizing:border-box}
     html,body{height:100%}
-    body{
-      margin:0;
-      font-family:var(--sans);
-      color:var(--text);
-      background:
-        radial-gradient(1200px 800px at 18% 10%, rgba(139,92,246,.35), transparent 55%),
-        radial-gradient(1000px 700px at 82% 30%, rgba(34,197,94,.22), transparent 60%),
-        linear-gradient(180deg, var(--bg1), var(--bg2));
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:24px;
-      overflow-x:hidden;
     }
     .wrap{width:min(860px, 100%);}
     .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;opacity:.92;}
@@ -584,19 +571,7 @@ h1{
       el("pickedMap").onclick = () => openMap(pickedData.mapUrl);
       el("otherMap").onclick  = () => openMap(otherData.mapUrl);
 
-      el("pickedCopy").onclick = async () => {
-        const t = `${pickedData.title}\n${pickedData.dateLabel}\n${pickedData.time}\n${pickedData.note}`;
-        const ok = await copyToClipboard(t);
-        msg.style.display = "block";
-        msg.textContent = ok ? "已複製你選到的那張卡 ✨" : "複製失敗（可以再試一次）";
-      };
 
-      el("otherCopy").onclick = async () => {
-        const t = `${otherData.title}\n${otherData.dateLabel}\n${otherData.time}\n${otherData.note}`;
-        const ok = await copyToClipboard(t);
-        msg.style.display = "block";
-        msg.textContent = ok ? "已複製另一張卡 ✨" : "複製失敗（可以再試一次）";
-      };
     }
 
     function onPick(which){

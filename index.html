@@ -207,21 +207,39 @@
       color: rgba(216,178,92,.92);
       flex:0 0 auto;
     }
-    .spark{
+  .spark{
+    .linkBtn{
+  font-family: var(--mono);
+  font-size:12px;
+  opacity:.9;
+  color: rgba(216,178,92,.88);
+  text-decoration: underline;
+  cursor: pointer;
+  display:inline-block;
+}
+.linkBtn:visited{ color: rgba(216,178,92,.88); }
+.linkBtn:hover{ opacity:1; }
+
   font-family:var(--mono);
   font-size:12px;
-  color:rgba(255,255,255,.70);
+  color:rgba(255,255,255,.78);
 
   position:absolute;
-  right:14px;
-  bottom:12px;
+  top:14px;
+
+  /* ✅ 右上角：但避開右上的 A/B 圓角標籤 */
+  right:56px;
 
   padding:4px 8px;
   border-radius:999px;
   background:rgba(0,0,0,.28);
   border:1px solid rgba(216,178,92,.22);
   box-shadow:0 10px 24px rgba(0,0,0,.25);
+
+  /* ✅ 不要擋到卡片點擊 */
+  pointer-events:none;
 }
+
 
 
     .msg{
@@ -389,7 +407,7 @@
             <div class="eventTitle" id="pickedTitle"></div>
             <div class="eventMeta" id="pickedMeta"></div>
             <div class="mini">
-              <span class="linkBtn" id="pickedMap">Open map</span>
+              <a class="linkBtn" id="pickedMap" href="#" target="_blank" rel="noopener noreferrer">Open map</a>
             </div>
           </div>
 
@@ -397,7 +415,7 @@
             <div class="eventTitle" id="otherTitle"></div>
             <div class="eventMeta" id="otherMeta"></div>
             <div class="mini">
-              <span class="linkBtn" id="otherMap">Open map</span>
+              <a class="linkBtn" id="otherMap" href="#" target="_blank" rel="noopener noreferrer">Open map</a>
             </div>
           </div>
         </div>
@@ -610,8 +628,20 @@
       el("otherTitle").textContent = "另一張是：" + otherData.title;
       el("otherMeta").textContent = otherData.dateLabel + "\n" + otherData.time + "\n" + otherData.note;
 
-      el("pickedMap").onclick = () => openMap(pickedData.mapUrl);
-      el("otherMap").onclick  = () => openMap(otherData.mapUrl);
+const pickedLink = el("pickedMap");
+const otherLink  = el("otherMap");
+
+pickedLink.href = pickedData.mapUrl || "#";
+otherLink.href  = otherData.mapUrl  || "#";
+
+// 如果沒連結，就不要跳走，改顯示你的提示訊息
+pickedLink.onclick = (e) => {
+  if (!pickedData.mapUrl) { e.preventDefault(); openMap(""); }
+};
+otherLink.onclick = (e) => {
+  if (!otherData.mapUrl) { e.preventDefault(); openMap(""); }
+};
+
     }
 function clearPickFX(){
   [cardA, cardB].forEach(c => {

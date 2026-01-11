@@ -621,26 +621,49 @@ function addPickBadge(which){
 
 function onPick(which){
   if (step !== 0) return;
+
   picked = which;
   step = 1;
 
-  // 先鎖卡、先不揭曉內容
+  // 清掉上一次狀態（以防 reset 後殘留）
+  clearPickFX();
+
+  const pickedEl = which === "A" ? cardA : cardB;
+  const otherEl  = which === "A" ? cardB : cardA;
+
   setCardDisabled(true);
+
+  // 先不揭曉卡片內容
   revealGrid.style.display = "none";
   otherEvent.style.display = "none";
   stepActions.style.display = "none";
   finalActions.style.display = "none";
 
-  // 先出現「命運已決定」這段文字
+  // 抽牌特效：你選的發光+抖，另一張變淡
+  pickedEl.classList.add("glow","shake");
+  otherEl.classList.add("dim");
+
   msg.style.display = "block";
-  msg.textContent = "命運已決定…";
+  msg.textContent = "抽牌中…\n（請保持神秘感😌）";
   confettiBurst();
 
-  // 停一下再揭曉你選到的那張（你可以把 900 改成 1200 更有戲）
+  // 抖完後移除 shake（保留 glow）
+  setTimeout(() => pickedEl.classList.remove("shake"), 600);
+
+  // 第二段文字：命運已決定…
+  setTimeout(() => {
+    msg.textContent = "命運已決定…\n（先讓我公布你選到的那張ㄅ😗）";
+  }, 700);
+
+  // 最後才揭曉內容 + 出現 YOU CHOSE 徽章
   setTimeout(() => {
     renderPicked(which);
     revealGrid.style.display = "block";
     stepActions.style.display = "flex";
+
+    addPickBadge(which);
+    pickedEl.classList.add("revealPulse");
+    setTimeout(() => pickedEl.classList.remove("revealPulse"), 950);
 
     revealGrid.scrollIntoView({
       behavior: prefersReduced ? "auto" : "smooth",
@@ -648,6 +671,7 @@ function onPick(which){
     });
   }, 1600);
 }
+
 
 
     // ✅ 綁事件（一定在 onPick 外面）
@@ -668,17 +692,22 @@ function onPick(which){
       otherEvent.scrollIntoView({ behavior: prefersReduced ? "auto" : "smooth", block: "start" });
     });
 
-    function resetAll(){
-      picked = null;
-      step = 0;
-      setCardDisabled(false);
-      revealGrid.style.display = "none";
-      otherEvent.style.display = "none";
-      msg.style.display = "none";
-      msg.textContent = "";
-      stepActions.style.display = "none";
-      finalActions.style.display = "none";
-    }
+   function resetAll(){
+  picked = null;
+  step = 0;
+
+  clearPickFX();          // ← 新增：清徽章+特效
+  setCardDisabled(false);
+
+  revealGrid.style.display = "none";
+  otherEvent.style.display = "none";
+  msg.style.display = "none";
+  msg.textContent = "";
+
+  stepActions.style.display = "none";
+  finalActions.style.display = "none";
+}
+
     el("resetBtn").addEventListener("click", resetAll);
     el("resetBtn2").addEventListener("click", resetAll);
 

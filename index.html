@@ -428,7 +428,6 @@
         </div>
 
         <div class="actions" id="finalActions" style="display:none;">
-          <button class="green" id="copyReplyBtn">Copy reply</button>
           <button class="primary" id="icsBtn">Add to Calendar</button>
           <button class="ghost" id="resetBtn2">Reset</button>
         </div>
@@ -750,17 +749,6 @@ function onPick(which){
 
     el("resetBtn").addEventListener("click", resetAll);
     el("resetBtn2").addEventListener("click", resetAll);
-
-    el("copyReplyBtn").addEventListener("click", async () => {
-      const txt =
-`我選到的是 Card ${picked || "?"} 😆
-但你那句「哈哈其實我都訂了」太犯規了。
-
-我OK！3/6 A CUT + 3/7 漢來，走。`;
-      const ok = await copyToClipboard(txt);
-      msg.style.display = "block";
-      msg.textContent = ok ? "Copied ✨（可以直接貼回訊息給我）" : "Copy failed";
-    });
 
     function buildICS(){
       const e1 = parseLocalDateTime(CONFIG.countdownTo);

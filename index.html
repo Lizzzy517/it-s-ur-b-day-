@@ -260,23 +260,25 @@
       100%{ transform: scale(1); }
     }
 
-    .pickBadge{
-      position:absolute;
-      top:14px;
-      left:14px;
-      padding:6px 10px;
-      border-radius:999px;
-      font-family: var(--mono);
-      font-size:11px;
-      letter-spacing:.6px;
-      text-transform:uppercase;
-      color: rgba(216,178,92,.95);
-      background: rgba(0,0,0,.38);
-      border: 1px solid rgba(216,178,92,.32);
-      box-shadow: 0 12px 28px rgba(0,0,0,.35);
-      pointer-events:none;
-      z-index:3;
-    }
+.pickBadge{
+  position:absolute;
+  top:14px;
+  right:14px;   /* ✅ 改成右上 */
+  left:auto;    /* ✅ 取消 left */
+  padding:6px 10px;
+  border-radius:999px;
+  font-family: var(--mono);
+  font-size:11px;
+  letter-spacing:.6px;
+  text-transform:uppercase;
+  color: rgba(216,178,92,.95);
+  background: rgba(0,0,0,.38);
+  border: 1px solid rgba(216,178,92,.32);
+  box-shadow: 0 12px 28px rgba(0,0,0,.35);
+  pointer-events:none;
+  z-index:3;
+}
+
 
 /* ===== Flip reveal (front/back) ===== */
 .fate{
@@ -609,13 +611,21 @@
       });
     }
 
-    function addPickBadge(which){
-      const pickedEl = which === "A" ? cardA : cardB;
-      const badge = document.createElement("div");
-      badge.className = "pickBadge";
-      badge.textContent = "YOU CHOSE";
-      pickedEl.appendChild(badge);
-    }
+function addPickBadge(which){
+  const pickedEl = which === "A" ? cardA : cardB;
+
+  // 先移除舊的（避免重複）
+  const old = pickedEl.querySelector(".pickBadge");
+  if (old) old.remove();
+
+  // ✅ 徽章只塞在正面
+  const front = pickedEl.querySelector(".fateFront") || pickedEl;
+  const badge = document.createElement("div");
+  badge.className = "pickBadge";
+  badge.textContent = "YOU CHOSE";
+  front.appendChild(badge);
+}
+
 
 function revealInCard(cardEl, data){
   cardEl.classList.add("revealed"); // ✅ 這行會觸發翻面

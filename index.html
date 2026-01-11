@@ -207,8 +207,8 @@
       color: rgba(216,178,92,.92);
       flex:0 0 auto;
     }
-  .spark{
-    .linkBtn{
+/* link button (Open map) */
+.linkBtn{
   font-family: var(--mono);
   font-size:12px;
   opacity:.9;
@@ -217,6 +217,25 @@
   cursor: pointer;
   display:inline-block;
 }
+.linkBtn:visited{ color: rgba(216,178,92,.88); }
+.linkBtn:hover{ opacity:1; }
+
+/* you chose / tap hint badge on card */
+.spark{
+  font-family:var(--mono);
+  font-size:12px;
+  color:rgba(255,255,255,.78);
+  position:absolute;
+  top:14px;
+  right:56px; /* 右上角，避開 A/B label */
+  padding:4px 8px;
+  border-radius:999px;
+  background:rgba(0,0,0,.28);
+  border:1px solid rgba(216,178,92,.22);
+  box-shadow:0 10px 24px rgba(0,0,0,.25);
+  pointer-events:none; /* 不擋點擊 */
+}
+
 .linkBtn:visited{ color: rgba(216,178,92,.88); }
 .linkBtn:hover{ opacity:1; }
 
@@ -659,14 +678,15 @@
     const revealGrid = el("revealGrid");
     const otherEvent = el("otherEvent");
     const msg = el("msg");
-    function showMsg(text, side){ // side: "left" | "right"
+function showMsg(text, side){ // side: "left" | "right"
   msg.style.display = "block";
   msg.classList.toggle("right", side === "right");
   msg.classList.remove("pop");
-  showMsg text;
-  void msg.offsetWidth; // reflow to restart animation
+  msg.textContent = text;     // ✅ 這行才對
+  void msg.offsetWidth;       // reflow
   msg.classList.add("pop");
 }
+
 
     const stepActions = el("stepActions");
     const finalActions = el("finalActions");
@@ -697,13 +717,13 @@ const otherLink  = el("otherMap");
 pickedLink.href = pickedData.mapUrl || "#";
 otherLink.href  = otherData.mapUrl  || "#";
 
-// 如果沒連結，就不要跳走，改顯示你的提示訊息
 pickedLink.onclick = (e) => {
-  if (!pickedData.mapUrl) { e.preventDefault(); openMap(""); }
+  if (!pickedData.mapUrl) { e.preventDefault(); showMsg("我還沒把地圖連結貼上去 😶", "left"); }
 };
 otherLink.onclick = (e) => {
-  if (!otherData.mapUrl) { e.preventDefault(); openMap(""); }
+  if (!otherData.mapUrl) { e.preventDefault(); showMsg("我還沒把地圖連結貼上去 😶", "left"); }
 };
+
 
     }
 function clearPickFX(){
@@ -728,7 +748,6 @@ function onPick(which){
   picked = which;
   step = 1;
 
-  // 清掉上一次狀態（以防 reset 後殘留）
   clearPickFX();
 
   const pickedEl = which === "A" ? cardA : cardB;
@@ -736,29 +755,23 @@ function onPick(which){
 
   setCardDisabled(true);
 
-  // 先不揭曉卡片內容
   revealGrid.style.display = "none";
   otherEvent.style.display = "none";
   stepActions.style.display = "none";
   finalActions.style.display = "none";
 
-  // 抽牌特效：你選的發光+抖，另一張變淡
   pickedEl.classList.add("glow","shake");
   otherEl.classList.add("dim");
 
-  msg.style.display = "block";
-  showMsg "抽牌中…\n（請保持神秘感😌）";
+  showMsg("抽牌中…\n（請保持神秘感😌）", "left");
   confettiBurst();
 
-  // 抖完後移除 shake（保留 glow）
   setTimeout(() => pickedEl.classList.remove("shake"), 850);
 
-  // 第二段文字：命運已決定…
   setTimeout(() => {
-    showMsg "命運已決定…\n（先讓我公布你選到的那張ㄅ😗）";
+    showMsg("命運已決定…\n（先讓我公布你選到的那張ㄅ😗）", "left");
   }, 700);
 
-  // 最後才揭曉內容 + 出現 YOU CHOSE 徽章
   setTimeout(() => {
     renderPicked(which);
     revealGrid.style.display = "block";
@@ -777,6 +790,7 @@ function onPick(which){
 
 
 
+
     // ✅ 綁事件（一定在 onPick 外面）
     cardA.addEventListener("click", () => onPick("A"));
     cardB.addEventListener("click", () => onPick("B"));
@@ -784,16 +798,16 @@ function onPick(which){
     cardB.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onPick("B"); } });
 
     el("revealOtherBtn").addEventListener("click", () => {
-      if (step !== 1) return;
-      step = 2;
-      otherEvent.style.display = "block";
-      msg.style.display = "block";
-      showMsg CONFIG.twistText;
-      confettiBurst();
-      stepActions.style.display = "none";
-      finalActions.style.display = "flex";
-      otherEvent.scrollIntoView({ behavior: prefersReduced ? "auto" : "smooth", block: "start" });
-    });
+  if (step !== 1) return;
+  step = 2;
+  otherEvent.style.display = "block";
+  showMsg(CONFIG.twistText, "left");
+  confettiBurst();
+  stepActions.style.display = "none";
+  finalActions.style.display = "flex";
+  otherEvent.scrollIntoView({ behavior: prefersReduced ? "auto" : "smooth", block: "start" });
+});
+
 
    function resetAll(){
   picked = null;
@@ -805,7 +819,10 @@ function onPick(which){
   revealGrid.style.display = "none";
   otherEvent.style.display = "none";
   msg.style.display = "none";
-  showMsg "";
+  msg.style.display = "none";
+msg.textContent = "";
+msg.classList.remove("right","pop");
+;
 
   stepActions.style.display = "none";
   finalActions.style.display = "none";

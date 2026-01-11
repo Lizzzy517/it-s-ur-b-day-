@@ -541,26 +541,36 @@
       el("otherMap").onclick  = () => openMap(otherData.mapUrl);
     }
 
-    function onPick(which){
-      if (step !== 0) return;
-      picked = which;
-      step = 1;
+function onPick(which){
+  if (step !== 0) return;
+  picked = which;
+  step = 1;
 
-      setCardDisabled(true);
-      revealGrid.style.display = "block";
-      otherEvent.style.display = "none";
+  // 先鎖卡、先不揭曉內容
+  setCardDisabled(true);
+  revealGrid.style.display = "none";
+  otherEvent.style.display = "none";
+  stepActions.style.display = "none";
+  finalActions.style.display = "none";
 
-      msg.style.display = "block";
-      msg.textContent = "命運已決定…\n（先公布你選到的那張ㄅ😗）";
+  // 先出現「命運已決定」這段文字
+  msg.style.display = "block";
+  msg.textContent = "命運已決定…\n（先讓我公布你選到的那張ㄅ😗）";
+  confettiBurst();
 
-      stepActions.style.display = "flex";
-      finalActions.style.display = "none";
+  // 停一下再揭曉你選到的那張（你可以把 900 改成 1200 更有戲）
+  setTimeout(() => {
+    renderPicked(which);
+    revealGrid.style.display = "block";
+    stepActions.style.display = "flex";
 
-      renderPicked(which);
-      confettiBurst();
+    revealGrid.scrollIntoView({
+      behavior: prefersReduced ? "auto" : "smooth",
+      block: "start"
+    });
+  }, 1200);
+}
 
-      revealGrid.scrollIntoView({ behavior: prefersReduced ? "auto" : "smooth", block: "start" });
-    }
 
     // ✅ 綁事件（一定在 onPick 外面）
     cardA.addEventListener("click", () => onPick("A"));

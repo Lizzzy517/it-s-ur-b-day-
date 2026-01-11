@@ -555,7 +555,7 @@ function onPick(which){
 
   // 先出現「命運已決定」這段文字
   msg.style.display = "block";
-  msg.textContent = "命運已決定…\n（先讓我公布你選到的那張ㄅ😗）";
+  msg.textContent = "命運已決定…";
   confettiBurst();
 
   // 停一下再揭曉你選到的那張（你可以把 900 改成 1200 更有戲）
@@ -568,7 +568,7 @@ function onPick(which){
       behavior: prefersReduced ? "auto" : "smooth",
       block: "start"
     });
-  }, 1200);
+  }, 1600);
 }
 
 

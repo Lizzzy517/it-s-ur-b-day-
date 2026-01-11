@@ -1,0 +1,612 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Birthday Fate Cards</title>
+  <meta name="description" content="An interactive invitation — made with care." />
+  <style>
+    :root{
+      --bg1:#0b1020;
+      --bg2:#130b2b;
+      --text:rgba(255,255,255,.92);
+      --muted:rgba(255,255,255,.68);
+      --accent:#8b5cf6;
+      --accent2:#22c55e;
+      --shadow: 0 18px 60px rgba(0,0,0,.45);
+      --radius: 22px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 800px at 18% 10%, rgba(139,92,246,.35), transparent 55%),
+        radial-gradient(1000px 700px at 82% 30%, rgba(34,197,94,.22), transparent 60%),
+        linear-gradient(180deg, var(--bg1), var(--bg2));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+      overflow-x:hidden;
+    }
+    .wrap{width:min(860px, 100%);}
+    .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;opacity:.92;}
+    .brand{font-family:var(--mono);font-size:13px;letter-spacing:.3px;color:var(--muted);display:flex;gap:10px;align-items:center;}
+    .dot{width:10px;height:10px;border-radius:999px;background:linear-gradient(135deg, var(--accent), #60a5fa);box-shadow:0 0 22px rgba(139,92,246,.55);}
+    .pill{font-family:var(--mono);font-size:12px;padding:8px 10px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:var(--muted);user-select:none;display:flex;gap:8px;align-items:center;}
+
+    .card{
+      position:relative;
+      border-radius:var(--radius);
+      background:linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow:var(--shadow);
+      padding:28px;
+      overflow:hidden;
+    }
+    .card:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background:
+        radial-gradient(700px 300px at 30% 0%, rgba(139,92,246,.30), transparent 55%),
+        radial-gradient(600px 260px at 85% 18%, rgba(34,197,94,.18), transparent 60%);
+      pointer-events:none;
+      opacity:.9;
+    }
+    .card > *{position:relative; z-index:1;}
+
+    h1{margin:0 0 10px;font-size:clamp(24px, 4vw, 36px);line-height:1.15;letter-spacing:-.02em;}
+    .sub{margin:0 0 16px;color:var(--muted);font-size:15px;line-height:1.75;white-space:pre-wrap;}
+
+    .panel{border-radius:18px;background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.14);padding:14px;}
+    .divider{height:1px;background:rgba(255,255,255,.12);margin:18px 0;}
+
+    .countdown{margin:14px 0 10px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;}
+    .tile{border-radius:18px;background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.14);padding:14px 12px;text-align:center;}
+    .num{font-family:var(--mono);font-size:22px;font-weight:850;letter-spacing:.4px;}
+    .label{margin-top:6px;font-size:12px;color:rgba(255,255,255,.62);font-family:var(--mono);}
+
+    .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;}
+    button{
+      border:0;cursor:pointer;border-radius:14px;padding:12px 14px;
+      font-weight:750;letter-spacing:.2px;
+      background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.16);
+      color:var(--text);
+      transition: transform .06s ease, background .2s ease, border-color .2s ease, filter .2s ease;
+    }
+    button:hover{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.22)}
+    button:active{transform:translateY(1px) scale(.99)}
+    button:disabled{opacity:.55;cursor:not-allowed}
+    .primary{background:linear-gradient(135deg, rgba(139,92,246,.95), rgba(99,102,241,.92));border-color:rgba(255,255,255,.18);box-shadow:0 16px 40px rgba(139,92,246,.22);}
+    .green{background:linear-gradient(135deg, rgba(34,197,94,.92), rgba(16,185,129,.88));box-shadow:0 16px 40px rgba(34,197,94,.18);}
+    .ghost{background:transparent}
+
+    /* Fate cards */
+    .cards{
+      margin-top:12px;
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap:12px;
+    }
+    .fate{
+      border-radius:20px;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.14);
+      padding:16px;
+      cursor:pointer;
+      user-select:none;
+      transition: transform .08s ease, background .2s ease, border-color .2s ease;
+      min-height:140px;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+    }
+    .fate:hover{background:rgba(255,255,255,.11);border-color:rgba(255,255,255,.22)}
+    .fate:active{transform:translateY(1px)}
+    .fate.disabled{opacity:.65;cursor:not-allowed}
+    .fateTop{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
+    .fateLabel{
+      font-family:var(--mono);
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      background:rgba(0,0,0,.25);
+      border:1px solid rgba(255,255,255,.14);
+      color:rgba(255,255,255,.78);
+      flex:0 0 auto;
+    }
+    .fateTitle{font-weight:900;font-size:16px;letter-spacing:-.01em;}
+    .fateHint{margin-top:6px;color:rgba(255,255,255,.66);font-size:13px;line-height:1.6;}
+    .spark{
+      font-family:var(--mono);
+      font-size:12px;
+      color:rgba(255,255,255,.55);
+    }
+
+    .revealGrid{
+      margin-top:14px;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:12px;
+    }
+    .event{
+      border-radius:18px;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.14);
+      padding:14px;
+    }
+    .eventTitle{font-weight:900;font-size:16px;letter-spacing:-.01em;}
+    .eventMeta{margin-top:6px;color:rgba(255,255,255,.70);font-size:13px;line-height:1.6;white-space:pre-wrap;}
+    .mini{margin-top:10px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;}
+    .linkBtn{font-family:var(--mono);font-size:12px;opacity:.85;text-decoration:underline;cursor:pointer;user-select:none;}
+
+    .msg{
+      margin-top:14px;padding:14px;border-radius:16px;
+      background:rgba(0,0,0,.26);border:1px solid rgba(255,255,255,.14);
+      color:rgba(255,255,255,.90);line-height:1.75;white-space:pre-wrap;
+      display:none;
+    }
+
+    .footer{margin-top:14px;display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;color:var(--muted);font-size:12.5px;}
+
+    .confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:999;display:none;}
+    .confetti span{position:absolute;width:10px;height:14px;border-radius:3px;opacity:.95;transform:translateY(-30px) rotate(0deg);animation: fall 1.35s linear forwards;}
+    @keyframes fall{to{transform:translateY(calc(100vh + 40px)) rotate(680deg); opacity:1}}
+
+    @media (max-width: 560px){
+      .countdown{grid-template-columns: repeat(2, minmax(0, 1fr));}
+      .cards{grid-template-columns: 1fr;}
+      .pill{display:none}
+      .card{padding:22px}
+    }
+    @media (prefers-reduced-motion: reduce){
+      .confetti span{animation:none}
+      button,.fate{transition:none}
+    }
+  </style>
+</head>
+<body>
+  <div class="confetti" id="confetti"></div>
+
+  <main class="wrap">
+    <div class="topbar">
+      <div class="brand"><span class="dot"></span><span id="brandText">invitation</span></div>
+      <div class="pill">two days · one birthday · yours</div>
+    </div>
+
+    <section class="card" aria-live="polite">
+      <h1 id="title">Hey ✨</h1>
+      <p class="sub" id="subtitle"></p>
+
+      <div class="panel">
+        <div style="font-family:var(--mono); color:rgba(255,255,255,.75); font-size:12px;">countdown</div>
+
+        <div class="countdown" aria-label="countdown">
+          <div class="tile"><div class="num" id="d">--</div><div class="label">days</div></div>
+          <div class="tile"><div class="num" id="h">--</div><div class="label">hours</div></div>
+          <div class="tile"><div class="num" id="m">--</div><div class="label">mins</div></div>
+          <div class="tile"><div class="num" id="s">--</div><div class="label">secs</div></div>
+        </div>
+
+        <div style="color:rgba(255,255,255,.62); font-size:13px; line-height:1.6;">
+          <span id="dateLine"></span>
+        </div>
+
+        <div class="actions">
+          <button class="primary" id="openBtn">Open</button>
+          <button class="ghost" id="peekBtn">Tiny hint</button>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Invitation flow -->
+      <div id="flow" style="display:none;">
+        <div class="sub" id="openingText"></div>
+
+        <div class="sub" style="margin-top:6px;margin-bottom:8px;color:rgba(255,255,255,.78);">
+          選一張卡片吧。那張卡片會決定——你今年生日「怎麼過」的命運。
+        </div>
+
+        <div class="cards" id="cards">
+          <div class="fate" id="cardA" role="button" tabindex="0" aria-label="Pick card A">
+            <div class="fateTop">
+              <div>
+                <div class="fateTitle">Card A</div>
+                <div class="fateHint">你選的那張，會先公布。</div>
+              </div>
+              <div class="fateLabel">A</div>
+            </div>
+            <div class="spark">tap to pick</div>
+          </div>
+
+          <div class="fate" id="cardB" role="button" tabindex="0" aria-label="Pick card B">
+            <div class="fateTop">
+              <div>
+                <div class="fateTitle">Card B</div>
+                <div class="fateHint">另一張會晚點揭曉。</div>
+              </div>
+              <div class="fateLabel">B</div>
+            </div>
+            <div class="spark">tap to pick</div>
+          </div>
+        </div>
+
+        <div class="revealGrid" id="revealGrid" style="display:none;">
+          <div class="event" id="pickedEvent">
+            <div class="eventTitle" id="pickedTitle"></div>
+            <div class="eventMeta" id="pickedMeta"></div>
+            <div class="mini">
+              <span class="linkBtn" id="pickedMap">Open map</span>
+              <span class="linkBtn" id="pickedCopy">Copy details</span>
+            </div>
+          </div>
+
+          <div class="event" id="otherEvent" style="display:none;">
+            <div class="eventTitle" id="otherTitle"></div>
+            <div class="eventMeta" id="otherMeta"></div>
+            <div class="mini">
+              <span class="linkBtn" id="otherMap">Open map</span>
+              <span class="linkBtn" id="otherCopy">Copy details</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="msg" id="msg"></div>
+
+        <div class="actions" id="stepActions" style="display:none;">
+          <button class="primary" id="revealOtherBtn">看看另一張卡</button>
+          <button class="ghost" id="resetBtn">Reset</button>
+        </div>
+
+        <div class="actions" id="finalActions" style="display:none;">
+          <button class="green" id="copyReplyBtn">Copy reply</button>
+          <button class="primary" id="icsBtn">Add to Calendar</button>
+          <button class="ghost" id="resetBtn2">Reset</button>
+        </div>
+      </div>
+
+      <div class="footer">
+        <div>made with care ✨</div>
+        <div style="font-family:var(--mono); font-size:12px; opacity:.8;" id="footRight"></div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // =========================
+    // EDIT HERE（只改這區）
+    // =========================
+    const CONFIG = {
+      to: "Addie",
+      from: "L",
+
+      // 倒數到（建議：3/6 晚餐開始時間）
+      countdownTo: "2026-03-06T19:00",
+
+      openingText:
+`我做了一個小小的互動邀請函。
+你只要選一張卡片就好🙂
+（不要想太多，照直覺選。）`,
+
+      // Card A = Day 1, Card B = Day 2（你也可以對調）
+      cardA: {
+        dateLabel: "2026/3/6（五）",
+        title: "A CUT · 國賓",
+        time: "19:00",
+        note: "生日晚餐。\n你只要出現就好。",
+        mapUrl: ""
+      },
+      cardB: {
+        dateLabel: "2026/3/7（六）",
+        title: "漢來（過夜）",
+        time: "Check-in 我們再一起決定",
+        note: "隔天我們去住一晚。\n不用趕行程，只要舒服。",
+        mapUrl: ""
+      },
+
+      // 揭曉後的補刀
+      twistText:
+`哈哈，但其實——
+我兩個都訂好了 🙂
+
+所以答案是：
+3/6 我們去吃 A CUT，
+3/7 我們去漢來住一晚。`
+    };
+
+    // ---- helpers ----
+    const el = (id) => document.getElementById(id);
+    const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function parseLocalDateTime(s){
+      const [date, time] = s.split("T");
+      const [y,m,d] = date.split("-").map(Number);
+      const [hh,mm] = time.split(":").map(Number);
+      return new Date(y, m-1, d, hh, mm, 0);
+    }
+
+    function fmtDateLine(dt){
+      const w = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][dt.getDay()];
+      return `counting down to: ${dt.getFullYear()}/${dt.getMonth()+1}/${dt.getDate()} ${String(dt.getHours()).padStart(2,"0")}:${String(dt.getMinutes()).padStart(2,"0")} (${w})`;
+    }
+
+    async function copyToClipboard(text){
+      try{ await navigator.clipboard.writeText(text); return true; }
+      catch{
+        try{
+          const ta = document.createElement("textarea");
+          ta.value = text;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand("copy");
+          ta.remove();
+          return true;
+        } catch { return false; }
+      }
+    }
+
+    function confettiBurst(){
+      if (prefersReduced) return;
+      const layer = el("confetti");
+      layer.innerHTML = "";
+      layer.style.display = "block";
+      const n = 70;
+      for (let i=0;i<n;i++){
+        const s = document.createElement("span");
+        s.style.left = (Math.random()*100) + "vw";
+        s.style.top = (-20 - Math.random()*30) + "px";
+        s.style.animationDelay = (Math.random()*0.35) + "s";
+        s.style.width = (8 + Math.random()*8) + "px";
+        s.style.height = (10 + Math.random()*10) + "px";
+        const hue = Math.floor(Math.random()*360);
+        s.style.background = `hsl(${hue} 90% 60%)`;
+        layer.appendChild(s);
+      }
+      setTimeout(() => { layer.style.display="none"; layer.innerHTML=""; }, 1700);
+    }
+
+    function openMap(url){
+      if (!url){
+        el("msg").style.display = "block";
+        el("msg").textContent = "我還沒把地圖連結貼上去 😶\n（你晚點可以把 CONFIG.cardA.mapUrl / cardB.mapUrl 補上）";
+        return;
+      }
+      window.open(url, "_blank", "noopener,noreferrer");
+    }
+
+    // ---- hydrate header ----
+    el("title").textContent = `Hi, ${CONFIG.to} ✨`;
+    el("subtitle").textContent = `From: ${CONFIG.from}\n（你可以慢慢看，沒有壓力。）`;
+    el("brandText").textContent = `to:${(CONFIG.to || "you").toLowerCase()}`;
+    el("footRight").textContent = `from:${(CONFIG.from || "").toLowerCase()}`;
+    el("openingText").textContent = CONFIG.openingText;
+
+    // ---- countdown ----
+    const target = parseLocalDateTime(CONFIG.countdownTo);
+    el("dateLine").textContent = fmtDateLine(target);
+
+    function tick(){
+      const now = new Date();
+      let diff = target.getTime() - now.getTime();
+      if (diff <= 0){
+        el("d").textContent = "0"; el("h").textContent = "0"; el("m").textContent = "0"; el("s").textContent = "0";
+        return;
+      }
+      const sec = Math.floor(diff / 1000);
+      el("d").textContent = String(Math.floor(sec / 86400));
+      el("h").textContent = String(Math.floor((sec % 86400) / 3600));
+      el("m").textContent = String(Math.floor((sec % 3600) / 60));
+      el("s").textContent = String(sec % 60);
+    }
+    tick();
+    setInterval(tick, 1000);
+
+    // ---- flow open ----
+    const flow = el("flow");
+    el("openBtn").addEventListener("click", () => {
+      flow.style.display = "block";
+      confettiBurst();
+      flow.scrollIntoView({ behavior: prefersReduced ? "auto" : "smooth", block: "start" });
+    });
+    el("peekBtn").addEventListener("click", () => {
+      el("peekBtn").textContent = "hint: choose a card. fate decides.";
+      setTimeout(() => el("peekBtn").textContent = "Tiny hint", 1600);
+    });
+
+    // ---- pick logic ----
+    const cardA = el("cardA");
+    const cardB = el("cardB");
+    const revealGrid = el("revealGrid");
+    const pickedEvent = el("pickedEvent");
+    const otherEvent = el("otherEvent");
+    const msg = el("msg");
+    const stepActions = el("stepActions");
+    const finalActions = el("finalActions");
+
+    let picked = null;  // "A" or "B"
+    let step = 0;       // 0 pick, 1 picked shown, 2 other shown + twist
+
+    function setCardDisabled(disabled){
+      [cardA, cardB].forEach(c => {
+        c.classList.toggle("disabled", disabled);
+        c.setAttribute("aria-disabled", disabled ? "true" : "false");
+      });
+    }
+
+    function renderPicked(which){
+      const pickedData = which === "A" ? CONFIG.cardA : CONFIG.cardB;
+      const otherData  = which === "A" ? CONFIG.cardB : CONFIG.cardA;
+
+      el("pickedTitle").textContent = `你選到的是：${pickedData.title}`;
+      el("pickedMeta").textContent = `${pickedData.dateLabel}\n${pickedData.time}\n${pickedData.note}`;
+
+      el("otherTitle").textContent  = `另一張是：${otherData.title}`;
+      el("otherMeta").textContent   = `${otherData.dateLabel}\n${otherData.time}\n${otherData.note}`;
+
+      el("pickedMap").onclick = () => openMap(pickedData.mapUrl);
+      el("otherMap").onclick  = () => openMap(otherData.mapUrl);
+
+      el("pickedCopy").onclick = async () => {
+        const t = `${pickedData.title}\n${pickedData.dateLabel}\n${pickedData.time}\n${pickedData.note}`;
+        const ok = await copyToClipboard(t);
+        msg.style.display = "block";
+        msg.textContent = ok ? "已複製你選到的那張卡 ✨" : "複製失敗（可以再試一次）";
+      };
+
+      el("otherCopy").onclick = async () => {
+        const t = `${otherData.title}\n${otherData.dateLabel}\n${otherData.time}\n${otherData.note}`;
+        const ok = await copyToClipboard(t);
+        msg.style.display = "block";
+        msg.textContent = ok ? "已複製另一張卡 ✨" : "複製失敗（可以再試一次）";
+      };
+    }
+
+    function onPick(which){
+      if (step !== 0) return;
+      picked = which;
+      step = 1;
+
+      setCardDisabled(true);
+      revealGrid.style.display = "block";
+      otherEvent.style.display = "none";
+      msg.style.display = "block";
+      msg.textContent = "命運已決定…\n（先讓我公布你選到的那張🙂）";
+      stepActions.style.display = "flex";
+      finalActions.style.display = "none";
+
+      renderPicked(which);
+      confettiBurst();
+
+function startLoadingDots(messagePrefix = "命運讀取中") {
+  let i = 0;
+  const timer = setInterval(() => {
+    const dots = ".".repeat(i % 4); // "", ".", "..", "..."
+    el("msg").style.display = "block";
+    el("msg").textContent = `${messagePrefix}${dots}`;
+    i++;
+  }, 250);
+  return () => clearInterval(timer); // 回傳 stop function
+}
+
+      revealGrid.scrollIntoView({ behavior: prefersReduced ? "auto" : "smooth", block: "start" });
+    }
+
+    cardA.addEventListener("click", () => onPick("A"));
+    cardB.addEventListener("click", () => onPick("B"));
+    cardA.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onPick("A"); }});
+    cardB.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onPick("B"); }});
+
+    el("revealOtherBtn").addEventListener("click", () => {
+      if (step !== 1) return;
+      step = 2;
+      otherEvent.style.display = "block";
+      msg.style.display = "block";
+      msg.textContent = CONFIG.twistText;
+      confettiBurst();
+      stepActions.style.display = "none";
+      finalActions.style.display = "flex";
+      otherEvent.scrollIntoView({ behavior: prefersReduced ? "auto" : "smooth", block: "start" });
+    });
+
+    function resetAll(){
+      picked = null;
+      step = 0;
+      setCardDisabled(false);
+      revealGrid.style.display = "none";
+      otherEvent.style.display = "none";
+      msg.style.display = "none";
+      msg.textContent = "";
+      stepActions.style.display = "none";
+      finalActions.style.display = "none";
+    }
+
+    el("resetBtn").addEventListener("click", resetAll);
+    el("resetBtn2").addEventListener("click", resetAll);
+
+    // ---- reply & calendar ----
+    el("copyReplyBtn").addEventListener("click", async () => {
+      const txt =
+`我選到的是 Card ${picked || "?"} 😆
+但你那句「哈哈其實我都訂了」太犯規了。
+
+我OK！3/6 A CUT + 3/7 漢來，走。`;
+      const ok = await copyToClipboard(txt);
+      msg.style.display = "block";
+      msg.textContent = ok ? "Copied ✨（可以直接貼回訊息給我）" : "Copy failed";
+    });
+
+    function pad2(n){ return String(n).padStart(2,"0"); }
+    function toICSLocal(y,m,d,hh,mm){ return `${y}${pad2(m)}${pad2(d)}T${pad2(hh)}${pad2(mm)}00`; }
+    function escICS(s){
+      return (s||"").replace(/\\/g,"\\\\").replace(/\n/g,"\\n").replace(/,/g,"\\,").replace(/;/g,"\\;");
+    }
+
+    function buildICS(){
+      const e1 = parseLocalDateTime(CONFIG.countdownTo);
+      const e1end = new Date(e1.getTime() + 2*60*60*1000);
+
+      // 3/7 default start 20:00, 12h duration（你可自行改）
+      const y = e1.getFullYear();
+      const e2 = new Date(y, 2, 7, 20, 0, 0);
+      const e2end = new Date(e2.getTime() + 12*60*60*1000);
+
+      const uidBase = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+
+      const lines = [
+        "BEGIN:VCALENDAR",
+        "VERSION:2.0",
+        "PRODID:-//fate-cards//birthday//ZH",
+        "CALSCALE:GREGORIAN",
+        "METHOD:PUBLISH",
+
+        "BEGIN:VEVENT",
+        `UID:${uidBase}-1@inv`,
+        `DTSTAMP:${toICSLocal(e1.getFullYear(), e1.getMonth()+1, e1.getDate(), e1.getHours(), e1.getMinutes())}`,
+        `DTSTART:${toICSLocal(e1.getFullYear(), e1.getMonth()+1, e1.getDate(), e1.getHours(), e1.getMinutes())}`,
+        `DTEND:${toICSLocal(e1end.getFullYear(), e1end.getMonth()+1, e1end.getDate(), e1end.getHours(), e1end.getMinutes())}`,
+        `SUMMARY:${escICS("Birthday Dinner · " + CONFIG.cardA.title)}`,
+        `DESCRIPTION:${escICS(`${CONFIG.cardA.note}\n\nFrom: ${CONFIG.from}`)}`,
+        CONFIG.cardA.mapUrl ? `URL:${escICS(CONFIG.cardA.mapUrl)}` : "",
+        "END:VEVENT",
+
+        "BEGIN:VEVENT",
+        `UID:${uidBase}-2@inv`,
+        `DTSTAMP:${toICSLocal(e2.getFullYear(), e2.getMonth()+1, e2.getDate(), e2.getHours(), e2.getMinutes())}`,
+        `DTSTART:${toICSLocal(e2.getFullYear(), e2.getMonth()+1, e2.getDate(), e2.getHours(), e2.getMinutes())}`,
+        `DTEND:${toICSLocal(e2end.getFullYear(), e2end.getMonth()+1, e2end.getDate(), e2end.getHours(), e2end.getMinutes())}`,
+        `SUMMARY:${escICS("Overnight · " + CONFIG.cardB.title)}`,
+        `DESCRIPTION:${escICS(`${CONFIG.cardB.note}\n\nFrom: ${CONFIG.from}`)}`,
+        CONFIG.cardB.mapUrl ? `URL:${escICS(CONFIG.cardB.mapUrl)}` : "",
+        "END:VEVENT",
+
+        "END:VCALENDAR"
+      ].filter(Boolean);
+
+      return lines.join("\r\n");
+    }
+
+    el("icsBtn").addEventListener("click", () => {
+      const ics = buildICS();
+      const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "birthday-fate-cards.ics";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 800);
+
+      msg.style.display = "block";
+      msg.textContent = "已下載行事曆檔（.ics）✨\n你可以加到手機行事曆。";
+    });
+  </script>
+</body>
+</html>

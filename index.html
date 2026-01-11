@@ -350,328 +350,327 @@
     </section>
   </main>
 
-  <script>
-    // =========================
-    // EDIT HERE（只改這區）
-    // =========================
-    const CONFIG = {
-      to: "Addie",
-      from: "Liz",
+<script>
+  // =========================
+  // EDIT HERE（只改這區）
+  // =========================
+  const CONFIG = {
+    to: "Addie",
+    from: "Liz",
 
-      // 倒數到（建議：3/6 晚餐開始時間）
-      countdownTo: "2026-03-06T00:00",
-      openingText:
+    countdownTo: "2026-03-06T00:00",
+    openingText:
 `嘻嘻想不到吧 雖然沒有用網頁跟你告白
 但還是可以用網頁給你驚喜的｡:.ﾟヽ(*´∀`)ﾉﾟ.:｡
 （不要想太多，依照直覺選。）`,
 
-      // Card A = Day 1, Card B = Day 2（你也可以對調）
-      cardA: {
-        dateLabel: "2026/3/6（五）",
-        title: "A CUT · 國賓",
-        time: "19:00",
-        note: "恭喜你選到全世界最有用的身心靈課程\n你只要出現就好。",
-        mapUrl: "https://maps.app.goo.gl/hT77xj62Pigd9uqaA"
-      },
-      cardB: {
-        dateLabel: "2026/3/7（六）",
-        title: "漢來飯店一晚",
-        time: "Check-in 時間我們再一起決定",
-        note: "Nice and fancy的飯店住好住滿\n隔天早上還有島語早餐buffet",
-        mapUrl: "https://maps.app.goo.gl/Goks6L1aohtFGdAAA"
-      },
+    cardA: {
+      dateLabel: "2026/3/6（五）",
+      title: "A CUT · 國賓",
+      time: "19:00",
+      note: "恭喜你選到全世界最有用的身心靈課程\n你只要出現就好。",
+      mapUrl: "https://maps.app.goo.gl/hT77xj62Pigd9uqaA"
+    },
+    cardB: {
+      dateLabel: "2026/3/7（六）",
+      title: "漢來飯店一晚",
+      time: "Check-in 時間我們再一起決定",
+      note: "Nice and fancy的飯店住好住滿\n隔天早上還有島語早餐buffet",
+      mapUrl: "https://maps.app.goo.gl/Goks6L1aohtFGdAAA"
+    },
 
-      twistText:
+    twistText:
 `哈哈，但其實——
 我兩個都訂好了顆顆😉
 
 所以你生日那週的行程會長這樣：
 3/6 去吃 A CUT，
 3/7 去漢來住一晚。`
-    };
+  };
 
-    // =========================
-    // JS (不要再拆散它)
-    // =========================
-    (function(){
-      const el = (id) => document.getElementById(id);
-      const prefersReduced = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  // ---- helpers ----
+  const el = (id) => document.getElementById(id);
+  const prefersReduced = (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) || false;
 
-      function parseLocalDateTime(s){
-        const [date, time] = s.split("T");
-        const [y,m,d] = date.split("-").map(Number);
-        const [hh,mm] = time.split(":").map(Number);
-        return new Date(y, m-1, d, hh, mm, 0);
+  function parseLocalDateTime(s){
+    const parts = s.split("T");
+    const date = parts[0];
+    const time = parts[1] || "00:00";
+    const ymd = date.split("-").map(Number);
+    const hm = time.split(":").map(Number);
+    return new Date(ymd[0], ymd[1]-1, ymd[2], hm[0] || 0, hm[1] || 0, 0);
+  }
+
+  function fmtDateLine(dt){
+    const w = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][dt.getDay()];
+    return "counting down to: " +
+      dt.getFullYear() + "/" + (dt.getMonth()+1) + "/" + dt.getDate() + " " +
+      String(dt.getHours()).padStart(2,"0") + ":" + String(dt.getMinutes()).padStart(2,"0") +
+      " (" + w + ")";
+  }
+
+  async function copyToClipboard(text){
+    try { await navigator.clipboard.writeText(text); return true; }
+    catch {
+      try{
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        ta.remove();
+        return true;
+      } catch { return false; }
+    }
+  }
+
+  function confettiBurst(){
+    if (prefersReduced) return;
+    const layer = el("confetti");
+    layer.innerHTML = "";
+    layer.style.display = "block";
+    const n = 70;
+    for (let i=0;i<n;i++){
+      const s = document.createElement("span");
+      s.style.left = (Math.random()*100) + "vw";
+      s.style.top = (-20 - Math.random()*30) + "px";
+      s.style.animationDelay = (Math.random()*0.35) + "s";
+      s.style.width = (8 + Math.random()*8) + "px";
+      s.style.height = (10 + Math.random()*10) + "px";
+      const hue = Math.floor(Math.random()*360);
+      s.style.background = "hsl(" + hue + " 90% 60%)";
+      layer.appendChild(s);
+    }
+    setTimeout(() => { layer.style.display="none"; layer.innerHTML=""; }, 1700);
+  }
+
+  function openMap(url){
+    if (!url){
+      el("msg").style.display = "block";
+      el("msg").textContent = "我還沒把地圖連結貼上去 😶\n（你晚點可以把 CONFIG.cardA.mapUrl / cardB.mapUrl 補上）";
+      return;
+    }
+    window.open(url, "_blank", "noopener,noreferrer");
+  }
+
+  function pad2(n){ return String(n).padStart(2,"0"); }
+  function toICSLocal(y,m,d,hh,mm){ return "" + y + pad2(m) + pad2(d) + "T" + pad2(hh) + pad2(mm) + "00"; }
+  function escICS(s){
+    return (s||"")
+      .replace(/\\/g,"\\\\")
+      .replace(/\n/g,"\\n")
+      .replace(/,/g,"\\,")
+      .replace(/;/g,"\\;");
+  }
+
+  function init(){
+    // ---- hydrate header ----
+    el("title").textContent = "Hi, " + CONFIG.to + " ✨";
+    el("subtitle").textContent = "From: " + CONFIG.from + "\n（命運掌握在自己手中ㄡ💖）";
+    el("brandText").textContent = "to:" + (CONFIG.to || "you").toLowerCase();
+    el("footRight").textContent = "from:" + (CONFIG.from || "").toLowerCase();
+    el("openingText").textContent = CONFIG.openingText;
+
+    // ---- countdown ----
+    const target = parseLocalDateTime(CONFIG.countdownTo);
+    el("dateLine").textContent = fmtDateLine(target);
+
+    function tick(){
+      const now = new Date();
+      let diff = target.getTime() - now.getTime();
+      if (diff <= 0){
+        el("d").textContent = "0";
+        el("h").textContent = "0";
+        el("m").textContent = "0";
+        el("s").textContent = "0";
+        return;
       }
+      const sec = Math.floor(diff / 1000);
+      el("d").textContent = String(Math.floor(sec / 86400));
+      el("h").textContent = String(Math.floor((sec % 86400) / 3600));
+      el("m").textContent = String(Math.floor((sec % 3600) / 60));
+      el("s").textContent = String(sec % 60);
+    }
+    tick();
+    setInterval(tick, 1000);
 
-      function fmtDateLine(dt){
-        const w = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][dt.getDay()];
-        return `counting down to: ${dt.getFullYear()}/${dt.getMonth()+1}/${dt.getDate()} ${String(dt.getHours()).padStart(2,"0")}:${String(dt.getMinutes()).padStart(2,"0")} (${w})`;
-      }
+    // ---- flow open ----
+    const flow = el("flow");
+    el("openBtn").addEventListener("click", () => {
+      flow.style.display = "block";
+      confettiBurst();
+      flow.scrollIntoView({ behavior: prefersReduced ? "auto" : "smooth", block: "start" });
+    });
 
-      async function copyToClipboard(text){
-        try{ await navigator.clipboard.writeText(text); return true; }
-        catch{
-          try{
-            const ta = document.createElement("textarea");
-            ta.value = text;
-            document.body.appendChild(ta);
-            ta.select();
-            document.execCommand("copy");
-            ta.remove();
-            return true;
-          } catch { return false; }
-        }
-      }
+    el("peekBtn").addEventListener("click", () => {
+      el("peekBtn").textContent = "hint: choose a card. fate decides.";
+      setTimeout(() => el("peekBtn").textContent = "Tiny hint", 1600);
+    });
 
-      function confettiBurst(){
-        if (prefersReduced) return;
-        const layer = el("confetti");
-        layer.innerHTML = "";
-        layer.style.display = "block";
-        const n = 70;
-        for (let i=0;i<n;i++){
-          const s = document.createElement("span");
-          s.style.left = (Math.random()*100) + "vw";
-          s.style.top = (-20 - Math.random()*30) + "px";
-          s.style.animationDelay = (Math.random()*0.35) + "s";
-          s.style.width = (8 + Math.random()*8) + "px";
-          s.style.height = (10 + Math.random()*10) + "px";
-          const hue = Math.floor(Math.random()*360);
-          s.style.background = `hsl(${hue} 90% 60%)`;
-          layer.appendChild(s);
-        }
-        setTimeout(() => { layer.style.display="none"; layer.innerHTML=""; }, 1700);
-      }
+    // ---- pick logic ----
+    const cardA = el("cardA");
+    const cardB = el("cardB");
+    const revealGrid = el("revealGrid");
+    const otherEvent = el("otherEvent");
+    const msg = el("msg");
+    const stepActions = el("stepActions");
+    const finalActions = el("finalActions");
 
-      function openMap(url){
-        const msg = el("msg");
-        if (!url){
-          msg.style.display = "block";
-          msg.textContent = "我還沒把地圖連結貼上去 😶\n（你晚點可以把 CONFIG.cardA.mapUrl / cardB.mapUrl 補上）";
-          return;
-        }
-        window.open(url, "_blank", "noopener,noreferrer");
-      }
+    let picked = null;  // "A" or "B"
+    let step = 0;       // 0 pick, 1 picked shown, 2 other shown + twist
 
-      function pad2(n){ return String(n).padStart(2,"0"); }
-      function toICSLocal(y,m,d,hh,mm){ return `${y}${pad2(m)}${pad2(d)}T${pad2(hh)}${pad2(mm)}00`; }
-      function escICS(s){
-        return (s||"").replace(/\\/g,"\\\\").replace(/\n/g,"\\n").replace(/,/g,"\\,").replace(/;/g,"\\;");
-      }
+    function setCardDisabled(disabled){
+      [cardA, cardB].forEach(c => {
+        c.classList.toggle("disabled", disabled);
+        c.setAttribute("aria-disabled", disabled ? "true" : "false");
+      });
+    }
 
-      function init(){
-        // ---- hydrate header ----
-        el("title").textContent = `Hi, ${CONFIG.to} ✨`;
-        el("subtitle").textContent = `From: ${CONFIG.from}\n（命運掌握在自己手中ㄡ💖）`;
-        el("brandText").textContent = `to:${(CONFIG.to || "you").toLowerCase()}`;
-        el("footRight").textContent = `from:${(CONFIG.from || "").toLowerCase()}`;
-        el("openingText").textContent = CONFIG.openingText;
+    function renderPicked(which){
+      const pickedData = which === "A" ? CONFIG.cardA : CONFIG.cardB;
+      const otherData  = which === "A" ? CONFIG.cardB : CONFIG.cardA;
 
-        // ---- countdown ----
-        const target = parseLocalDateTime(CONFIG.countdownTo);
-        el("dateLine").textContent = fmtDateLine(target);
+      el("pickedTitle").textContent = "你選到的是：" + pickedData.title;
+      el("pickedMeta").textContent = pickedData.dateLabel + "\n" + pickedData.time + "\n" + pickedData.note;
 
-        function tick(){
-          const now = new Date();
-          let diff = target.getTime() - now.getTime();
-          if (diff <= 0){
-            el("d").textContent = "0"; el("h").textContent = "0"; el("m").textContent = "0"; el("s").textContent = "0";
-            return;
-          }
-          const sec = Math.floor(diff / 1000);
-          el("d").textContent = String(Math.floor(sec / 86400));
-          el("h").textContent = String(Math.floor((sec % 86400) / 3600));
-          el("m").textContent = String(Math.floor((sec % 3600) / 60));
-          el("s").textContent = String(sec % 60);
-        }
-        tick();
-        setInterval(tick, 1000);
+      el("otherTitle").textContent = "另一張是：" + otherData.title;
+      el("otherMeta").textContent = otherData.dateLabel + "\n" + otherData.time + "\n" + otherData.note;
 
-        // ---- flow open ----
-        const flow = el("flow");
-        el("openBtn").addEventListener("click", () => {
-          flow.style.display = "block";
-          confettiBurst();
-          flow.scrollIntoView({ behavior: prefersReduced ? "auto" : "smooth", block: "start" });
-        });
-        el("peekBtn").addEventListener("click", () => {
-          el("peekBtn").textContent = "hint: choose a card. fate decides.";
-          setTimeout(() => el("peekBtn").textContent = "Tiny hint", 1600);
-        });
+      el("pickedMap").onclick = () => openMap(pickedData.mapUrl);
+      el("otherMap").onclick  = () => openMap(otherData.mapUrl);
+    }
 
-        // ---- pick logic ----
-        const cardA = el("cardA");
-        const cardB = el("cardB");
-        const revealGrid = el("revealGrid");
-        const otherEvent = el("otherEvent");
-        const msg = el("msg");
-        const stepActions = el("stepActions");
-        const finalActions = el("finalActions");
+    function onPick(which){
+      if (step !== 0) return;
+      picked = which;
+      step = 1;
 
-        let picked = null;  // "A" or "B"
-        let step = 0;       // 0 pick, 1 picked shown, 2 other shown + twist
+      setCardDisabled(true);
+      revealGrid.style.display = "block";
+      otherEvent.style.display = "none";
 
-        function setCardDisabled(disabled){
-          [cardA, cardB].forEach(c => {
-            c.classList.toggle("disabled", disabled);
-            c.setAttribute("aria-disabled", disabled ? "true" : "false");
-          });
-        }
+      msg.style.display = "block";
+      msg.textContent = "命運已決定…\n（先讓我公布你選到的那張🙂）";
 
-        function renderPicked(which){
-          const pickedData = which === "A" ? CONFIG.cardA : CONFIG.cardB;
-          const otherData  = which === "A" ? CONFIG.cardB : CONFIG.cardA;
+      stepActions.style.display = "flex";
+      finalActions.style.display = "none";
 
-          el("pickedTitle").textContent = `你選到的是：${pickedData.title}`;
-          el("pickedMeta").textContent = `${pickedData.dateLabel}\n${pickedData.time}\n${pickedData.note}`;
+      renderPicked(which);
+      confettiBurst();
 
-          el("otherTitle").textContent  = `另一張是：${otherData.title}`;
-          el("otherMeta").textContent   = `${otherData.dateLabel}\n${otherData.time}\n${otherData.note}`;
+      revealGrid.scrollIntoView({ behavior: prefersReduced ? "auto" : "smooth", block: "start" });
+    }
 
-          el("pickedMap").onclick = () => openMap(pickedData.mapUrl);
-          el("otherMap").onclick  = () => openMap(otherData.mapUrl);
-        }
+    // ✅ 綁事件（一定在 onPick 外面）
+    cardA.addEventListener("click", () => onPick("A"));
+    cardB.addEventListener("click", () => onPick("B"));
+    cardA.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onPick("A"); } });
+    cardB.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onPick("B"); } });
 
-        function onPick(which){
-          if (step !== 0) return;
-          picked = which;
-          step = 1;
+    el("revealOtherBtn").addEventListener("click", () => {
+      if (step !== 1) return;
+      step = 2;
+      otherEvent.style.display = "block";
+      msg.style.display = "block";
+      msg.textContent = CONFIG.twistText;
+      confettiBurst();
+      stepActions.style.display = "none";
+      finalActions.style.display = "flex";
+      otherEvent.scrollIntoView({ behavior: prefersReduced ? "auto" : "smooth", block: "start" });
+    });
 
-          setCardDisabled(true);
-          revealGrid.style.display = "block";
-          otherEvent.style.display = "none";
+    function resetAll(){
+      picked = null;
+      step = 0;
+      setCardDisabled(false);
+      revealGrid.style.display = "none";
+      otherEvent.style.display = "none";
+      msg.style.display = "none";
+      msg.textContent = "";
+      stepActions.style.display = "none";
+      finalActions.style.display = "none";
+    }
+    el("resetBtn").addEventListener("click", resetAll);
+    el("resetBtn2").addEventListener("click", resetAll);
 
-          msg.style.display = "block";
-          msg.textContent = "命運已決定…\n（先讓我公布你選到的那張🙂）";
-
-          stepActions.style.display = "flex";
-          finalActions.style.display = "none";
-
-          renderPicked(which);
-          confettiBurst();
-
-          revealGrid.scrollIntoView({
-            behavior: prefersReduced ? "auto" : "smooth",
-            block: "start"
-          });
-        }
-
-        // ✅ 事件綁定一定要在 onPick 外面
-        cardA.addEventListener("click", () => onPick("A"));
-        cardB.addEventListener("click", () => onPick("B"));
-        cardA.addEventListener("keydown", (e) => {
-          if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onPick("A"); }
-        });
-        cardB.addEventListener("keydown", (e) => {
-          if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onPick("B"); }
-        });
-
-        el("revealOtherBtn").addEventListener("click", () => {
-          if (step !== 1) return;
-          step = 2;
-          otherEvent.style.display = "block";
-          msg.style.display = "block";
-          msg.textContent = CONFIG.twistText;
-          confettiBurst();
-          stepActions.style.display = "none";
-          finalActions.style.display = "flex";
-          otherEvent.scrollIntoView({ behavior: prefersReduced ? "auto" : "smooth", block: "start" });
-        });
-
-        function resetAll(){
-          picked = null;
-          step = 0;
-          setCardDisabled(false);
-          revealGrid.style.display = "none";
-          otherEvent.style.display = "none";
-          msg.style.display = "none";
-          msg.textContent = "";
-          stepActions.style.display = "none";
-          finalActions.style.display = "none";
-        }
-
-        el("resetBtn").addEventListener("click", resetAll);
-        el("resetBtn2").addEventListener("click", resetAll);
-
-        // ---- reply & calendar ----
-        el("copyReplyBtn").addEventListener("click", async () => {
-          const txt =
+    el("copyReplyBtn").addEventListener("click", async () => {
+      const txt =
 `我選到的是 Card ${picked || "?"} 😆
 但你那句「哈哈其實我都訂了」太犯規了。
 
 我OK！3/6 A CUT + 3/7 漢來，走。`;
-          const ok = await copyToClipboard(txt);
-          msg.style.display = "block";
-          msg.textContent = ok ? "Copied ✨（可以直接貼回訊息給我）" : "Copy failed";
-        });
+      const ok = await copyToClipboard(txt);
+      msg.style.display = "block";
+      msg.textContent = ok ? "Copied ✨（可以直接貼回訊息給我）" : "Copy failed";
+    });
 
-        function buildICS(){
-          const e1 = parseLocalDateTime(CONFIG.countdownTo);
-          const e1end = new Date(e1.getTime() + 2*60*60*1000);
+    function buildICS(){
+      const e1 = parseLocalDateTime(CONFIG.countdownTo);
+      const e1end = new Date(e1.getTime() + 2*60*60*1000);
 
-          const y = e1.getFullYear();
-          const e2 = new Date(y, 2, 7, 20, 0, 0);
-          const e2end = new Date(e2.getTime() + 12*60*60*1000);
+      const y = e1.getFullYear();
+      const e2 = new Date(y, 2, 7, 20, 0, 0);
+      const e2end = new Date(e2.getTime() + 12*60*60*1000);
 
-          const uidBase = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+      const uidBase = Date.now() + "-" + Math.random().toString(16).slice(2);
 
-          const lines = [
-            "BEGIN:VCALENDAR",
-            "VERSION:2.0",
-            "PRODID:-//fate-cards//birthday//ZH",
-            "CALSCALE:GREGORIAN",
-            "METHOD:PUBLISH",
+      const lines = [
+        "BEGIN:VCALENDAR",
+        "VERSION:2.0",
+        "PRODID:-//fate-cards//birthday//ZH",
+        "CALSCALE:GREGORIAN",
+        "METHOD:PUBLISH",
 
-            "BEGIN:VEVENT",
-            `UID:${uidBase}-1@inv`,
-            `DTSTAMP:${toICSLocal(e1.getFullYear(), e1.getMonth()+1, e1.getDate(), e1.getHours(), e1.getMinutes())}`,
-            `DTSTART:${toICSLocal(e1.getFullYear(), e1.getMonth()+1, e1.getDate(), e1.getHours(), e1.getMinutes())}`,
-            `DTEND:${toICSLocal(e1end.getFullYear(), e1end.getMonth()+1, e1end.getDate(), e1end.getHours(), e1end.getMinutes())}`,
-            `SUMMARY:${escICS("Birthday Dinner · " + CONFIG.cardA.title)}`,
-            `DESCRIPTION:${escICS(`${CONFIG.cardA.note}\n\nFrom: ${CONFIG.from}`)}`,
-            CONFIG.cardA.mapUrl ? `URL:${escICS(CONFIG.cardA.mapUrl)}` : "",
-            "END:VEVENT",
+        "BEGIN:VEVENT",
+        "UID:" + uidBase + "-1@inv",
+        "DTSTAMP:" + toICSLocal(e1.getFullYear(), e1.getMonth()+1, e1.getDate(), e1.getHours(), e1.getMinutes()),
+        "DTSTART:" + toICSLocal(e1.getFullYear(), e1.getMonth()+1, e1.getDate(), e1.getHours(), e1.getMinutes()),
+        "DTEND:" + toICSLocal(e1end.getFullYear(), e1end.getMonth()+1, e1end.getDate(), e1end.getHours(), e1end.getMinutes()),
+        "SUMMARY:" + escICS("Birthday Dinner · " + CONFIG.cardA.title),
+        "DESCRIPTION:" + escICS(CONFIG.cardA.note + "\n\nFrom: " + CONFIG.from),
+        CONFIG.cardA.mapUrl ? ("URL:" + escICS(CONFIG.cardA.mapUrl)) : "",
+        "END:VEVENT",
 
-            "BEGIN:VEVENT",
-            `UID:${uidBase}-2@inv`,
-            `DTSTAMP:${toICSLocal(e2.getFullYear(), e2.getMonth()+1, e2.getDate(), e2.getHours(), e2.getMinutes())}`,
-            `DTSTART:${toICSLocal(e2.getFullYear(), e2.getMonth()+1, e2.getDate(), e2.getHours(), e2.getMinutes())}`,
-            `DTEND:${toICSLocal(e2end.getFullYear(), e2end.getMonth()+1, e2end.getDate(), e2end.getHours(), e2end.getMinutes())}`,
-            `SUMMARY:${escICS("Overnight · " + CONFIG.cardB.title)}`,
-            `DESCRIPTION:${escICS(`${CONFIG.cardB.note}\n\nFrom: ${CONFIG.from}`)}`,
-            CONFIG.cardB.mapUrl ? `URL:${escICS(CONFIG.cardB.mapUrl)}` : "",
-            "END:VEVENT",
+        "BEGIN:VEVENT",
+        "UID:" + uidBase + "-2@inv",
+        "DTSTAMP:" + toICSLocal(e2.getFullYear(), e2.getMonth()+1, e2.getDate(), e2.getHours(), e2.getMinutes()),
+        "DTSTART:" + toICSLocal(e2.getFullYear(), e2.getMonth()+1, e2.getDate(), e2.getHours(), e2.getMinutes()),
+        "DTEND:" + toICSLocal(e2end.getFullYear(), e2end.getMonth()+1, e2end.getDate(), e2end.getHours(), e2end.getMinutes()),
+        "SUMMARY:" + escICS("Overnight · " + CONFIG.cardB.title),
+        "DESCRIPTION:" + escICS(CONFIG.cardB.note + "\n\nFrom: " + CONFIG.from),
+        CONFIG.cardB.mapUrl ? ("URL:" + escICS(CONFIG.cardB.mapUrl)) : "",
+        "END:VEVENT",
 
-            "END:VCALENDAR"
-          ].filter(Boolean);
+        "END:VCALENDAR"
+      ].filter(Boolean);
 
-          return lines.join("\r\n");
-        }
+      return lines.join("\r\n");
+    }
 
-        el("icsBtn").addEventListener("click", () => {
-          const ics = buildICS();
-          const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.href = url;
-          a.download = "birthday-fate-cards.ics";
-          document.body.appendChild(a);
-          a.click();
-          a.remove();
-          setTimeout(() => URL.revokeObjectURL(url), 800);
+    el("icsBtn").addEventListener("click", () => {
+      const ics = buildICS();
+      const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "birthday-fate-cards.ics";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 800);
 
-          msg.style.display = "block";
-          msg.textContent = "已下載行事曆檔（.ics）✨\n你可以加到手機行事曆。";
-        });
-      }
+      msg.style.display = "block";
+      msg.textContent = "已下載行事曆檔（.ics）✨\n你可以加到手機行事曆。";
+    });
+  }
 
-      if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", init);
-      } else {
-        init();
-      }
-    })();
-  </script>
+  // ✅ 最穩的啟動方式
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+</script>
+
 </body>
 </html>

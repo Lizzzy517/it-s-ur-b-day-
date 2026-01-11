@@ -242,15 +242,70 @@
 
 
 
-    .msg{
-      margin-top:14px;padding:14px;border-radius:16px;
-      background:rgba(0,0,0,.26);
-      border: 1px solid rgba(216,178,92,.22);
-      color:rgba(255,255,255,.90);
-      line-height:1.75;
-      white-space:pre-wrap;
-      display:none;
-    }
+/* ===== chat bubble ===== */
+.msg{
+  margin-top:14px;
+  padding:14px 16px;
+  border-radius:18px;
+  background:rgba(0,0,0,.34);
+  border:1px solid rgba(216,178,92,.22);
+  box-shadow:0 16px 40px rgba(0,0,0,.35);
+  color:rgba(255,255,255,.92);
+  line-height:1.75;
+  white-space:pre-wrap;
+  display:none;
+  position:relative;
+}
+
+/* bubble tail (left) */
+.msg::before{
+  content:"";
+  position:absolute;
+  top:16px;
+  left:-10px;
+  width:0;height:0;
+  border-top:10px solid transparent;
+  border-bottom:10px solid transparent;
+  border-right:10px solid rgba(216,178,92,.22); /* border */
+}
+.msg::after{
+  content:"";
+  position:absolute;
+  top:16px;
+  left:-9px;
+  width:0;height:0;
+  border-top:10px solid transparent;
+  border-bottom:10px solid transparent;
+  border-right:10px solid rgba(0,0,0,.34); /* fill */
+}
+
+/* right bubble option */
+.msg.right{
+  background:rgba(216,178,92,.12);
+  border-color:rgba(216,178,92,.28);
+}
+.msg.right::before{
+  left:auto;
+  right:-10px;
+  border-right:none;
+  border-left:10px solid rgba(216,178,92,.28);
+}
+.msg.right::after{
+  left:auto;
+  right:-9px;
+  border-right:none;
+  border-left:10px solid rgba(216,178,92,.12);
+}
+
+/* pop in animation */
+.msg.pop{
+  animation: msgPop .22s ease-out 1;
+}
+@keyframes msgPop{
+  0%{ transform:translateY(4px) scale(.99); opacity:.0; }
+  100%{ transform:translateY(0) scale(1); opacity:1; }
+}
+
 
     .footer{margin-top:14px;display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;color:var(--muted);font-size:12.5px;}
 
@@ -604,6 +659,15 @@
     const revealGrid = el("revealGrid");
     const otherEvent = el("otherEvent");
     const msg = el("msg");
+    function showMsg(text, side){ // side: "left" | "right"
+  msg.style.display = "block";
+  msg.classList.toggle("right", side === "right");
+  msg.classList.remove("pop");
+  showMsg text;
+  void msg.offsetWidth; // reflow to restart animation
+  msg.classList.add("pop");
+}
+
     const stepActions = el("stepActions");
     const finalActions = el("finalActions");
 
@@ -683,7 +747,7 @@ function onPick(which){
   otherEl.classList.add("dim");
 
   msg.style.display = "block";
-  msg.textContent = "抽牌中…\n（請保持神秘感😌）";
+  showMsg "抽牌中…\n（請保持神秘感😌）";
   confettiBurst();
 
   // 抖完後移除 shake（保留 glow）
@@ -691,7 +755,7 @@ function onPick(which){
 
   // 第二段文字：命運已決定…
   setTimeout(() => {
-    msg.textContent = "命運已決定…\n（先讓我公布你選到的那張ㄅ😗）";
+    showMsg "命運已決定…\n（先讓我公布你選到的那張ㄅ😗）";
   }, 700);
 
   // 最後才揭曉內容 + 出現 YOU CHOSE 徽章
@@ -724,7 +788,7 @@ function onPick(which){
       step = 2;
       otherEvent.style.display = "block";
       msg.style.display = "block";
-      msg.textContent = CONFIG.twistText;
+      showMsg CONFIG.twistText;
       confettiBurst();
       stepActions.style.display = "none";
       finalActions.style.display = "flex";
@@ -741,7 +805,7 @@ function onPick(which){
   revealGrid.style.display = "none";
   otherEvent.style.display = "none";
   msg.style.display = "none";
-  msg.textContent = "";
+  showMsg "";
 
   stepActions.style.display = "none";
   finalActions.style.display = "none";
@@ -806,7 +870,7 @@ function onPick(which){
       setTimeout(() => URL.revokeObjectURL(url), 800);
 
       msg.style.display = "block";
-      msg.textContent = "已下載行事曆檔（.ics）✨\n你可以加到手機行事曆。";
+      showMsg "已下載行事曆檔（.ics）✨\n你可以加到手機行事曆。";
     });
   }
 

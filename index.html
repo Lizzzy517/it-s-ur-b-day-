@@ -608,10 +608,14 @@ function onPick(which){
 }
 
 
-    cardA.addEventListener("click", () => onPick("A"));
-    cardB.addEventListener("click", () => onPick("B"));
-    cardA.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onPick("A"); }});
-    cardB.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onPick("B"); }});
+cardA.addEventListener("click", () => onPick("A"));
+cardB.addEventListener("click", () => onPick("B"));
+cardA.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onPick("A"); }
+});
+cardB.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onPick("B"); }
+});
 
     el("revealOtherBtn").addEventListener("click", () => {
       if (step !== 1) return;

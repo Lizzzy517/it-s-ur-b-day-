@@ -10,8 +10,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Cormorant+Garamond:wght@400;600&display=swap" rel="stylesheet">
 
   <style>
-    /* ===== Tarot Skin (override) ===== */
-
     :root{
       --bg1:#0b1020;
       --bg2:#130b2b;
@@ -25,7 +23,6 @@
       --sans: "Cormorant Garamond", ui-serif, Georgia, serif;
       --display: "Cinzel", ui-serif, Georgia, serif;
       --gold: #d8b25c;
-      --ink: rgba(255,255,255,.92);
     }
 
     *{box-sizing:border-box}
@@ -48,7 +45,6 @@
         linear-gradient(180deg, #070a14, #0c0720);
     }
 
-    /* subtle stars */
     body:before{
       content:"";
       position:fixed;
@@ -66,7 +62,6 @@
 
     h1{
       font-family: var(--display, var(--sans));
-      letter-spacing:.02em;
       margin:0 0 10px;
       font-size:clamp(24px, 4vw, 36px);
       line-height:1.15;
@@ -151,9 +146,9 @@
       border-color: rgba(216,178,92,.35);
       box-shadow: 0 16px 40px rgba(139,92,246,.22);
     }
-    .green{background:linear-gradient(135deg, rgba(34,197,94,.92), rgba(16,185,129,.88));box-shadow:0 16px 40px rgba(34,197,94,.18);}
     .ghost{background:transparent}
 
+    /* Fate cards */
     .cards{margin-top:12px;display:grid;grid-template-columns: repeat(2, minmax(0, 1fr));gap:12px;}
     .fate{
       border-radius:20px;
@@ -192,10 +187,10 @@
     }
     .fate:hover{background:rgba(255,255,255,.11);border-color:rgba(255,255,255,.22)}
     .fate:active{transform:translateY(1px)}
-    .fate.disabled{opacity:.65;cursor:not-allowed}
+    .fate.disabled{opacity:.65;cursor:not-allowed; pointer-events:none;}
 
     .fateTop{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
-    .fateTitle{font-weight:900;font-size:16px;letter-spacing:-.01em;font-family:var(--display, var(--sans));letter-spacing:.03em;}
+    .fateTitle{font-weight:900;font-size:16px;font-family:var(--display, var(--sans));letter-spacing:.03em;}
     .fateHint{margin-top:6px;color:rgba(255,255,255,.66);font-size:13px;line-height:1.6;}
     .fateLabel{
       font-family:var(--mono);
@@ -207,118 +202,132 @@
       color: rgba(216,178,92,.92);
       flex:0 0 auto;
     }
-/* link button (Open map) */
-.linkBtn{
-  font-family: var(--mono);
-  font-size:12px;
-  opacity:.9;
-  color: rgba(216,178,92,.88);
-  text-decoration: underline;
-  cursor: pointer;
-  display:inline-block;
+
+    /* hint badge */
+    .spark{
+      font-family:var(--mono);
+      font-size:12px;
+      color:rgba(255,255,255,.78);
+      position:absolute;
+      top:14px;
+      right:56px;
+      padding:4px 8px;
+      border-radius:999px;
+      background:rgba(0,0,0,.28);
+      border:1px solid rgba(216,178,92,.22);
+      box-shadow:0 10px 24px rgba(0,0,0,.25);
+      pointer-events:none;
+    }
+
+    /* link */
+    .linkBtn{
+      font-family: var(--mono);
+      font-size:12px;
+      opacity:.9;
+      color: rgba(216,178,92,.88);
+      text-decoration: underline;
+      cursor: pointer;
+      display:inline-block;
+    }
+    .linkBtn:visited{ color: rgba(216,178,92,.88); }
+    .linkBtn:hover{ opacity:1; }
+
+    /* ===== Pick FX ===== */
+    .fate.dim{ opacity:.55; filter:saturate(.85) contrast(.95); }
+    .fate.glow{
+      border-color: rgba(216,178,92,.55);
+      box-shadow:
+        0 0 0 1px rgba(216,178,92,.18),
+        0 18px 45px rgba(0,0,0,.35),
+        0 0 26px rgba(216,178,92,.18),
+        0 0 50px rgba(139,92,246,.12);
+    }
+    .fate.shake{ animation: fateShake .80s ease-in-out 2; }
+    @keyframes fateShake{
+      0%{transform:translate(0,0) rotate(0)}
+      12%{transform:translate(-4px,2px) rotate(-1.6deg)}
+      24%{transform:translate(5px,-3px) rotate(1.8deg)}
+      36%{transform:translate(-5px,-2px) rotate(-1.4deg)}
+      48%{transform:translate(4px,3px) rotate(1.4deg)}
+      60%{transform:translate(-3px,2px) rotate(-1.0deg)}
+      72%{transform:translate(3px,-2px) rotate(1.0deg)}
+      100%{transform:translate(0,0) rotate(0)}
+    }
+    .fate.revealPulse{ animation: revealPulse .9s ease-out 1; }
+    @keyframes revealPulse{
+      0%{ transform: scale(1); }
+      35%{ transform: scale(1.02); }
+      100%{ transform: scale(1); }
+    }
+
+    .pickBadge{
+      position:absolute;
+      top:14px;
+      left:14px;
+      padding:6px 10px;
+      border-radius:999px;
+      font-family: var(--mono);
+      font-size:11px;
+      letter-spacing:.6px;
+      text-transform:uppercase;
+      color: rgba(216,178,92,.95);
+      background: rgba(0,0,0,.38);
+      border: 1px solid rgba(216,178,92,.32);
+      box-shadow: 0 12px 28px rgba(0,0,0,.35);
+      pointer-events:none;
+      z-index:3;
+    }
+
+/* ===== Flip reveal (front/back) ===== */
+.fate{
+  perspective: 1000px; /* 3D 深度 */
 }
-.linkBtn:visited{ color: rgba(216,178,92,.88); }
-.linkBtn:hover{ opacity:1; }
 
-/* link button (Open map) */
-.linkBtn{
-  font-family: var(--mono);
-  font-size:12px;
-  opacity:.9;
-  color: rgba(216,178,92,.88);
-  text-decoration: underline;
-  cursor: pointer;
-  display:inline-block;
-}
-.linkBtn:visited{ color: rgba(216,178,92,.88); }
-.linkBtn:hover{ opacity:1; }
-
-/* you chose / tap hint badge on card */
-.spark{
-  font-family:var(--mono);
-  font-size:12px;
-  color:rgba(255,255,255,.78);
-  position:absolute;
-  top:14px;
-  right:56px; /* 右上角，避開 A/B label */
-  padding:4px 8px;
-  border-radius:999px;
-  background:rgba(0,0,0,.28);
-  border:1px solid rgba(216,178,92,.22);
-  box-shadow:0 10px 24px rgba(0,0,0,.25);
-  pointer-events:none; /* 不擋點擊 */
+.fateInner{
+  display:grid;                 /* 兩面疊在同一格，且高度會自動撐成最大那面 */
+  transform-style: preserve-3d;
+  transition: transform .85s cubic-bezier(.2,.8,.2,1);
+  will-change: transform;
 }
 
+.fateFace{
+  grid-area: 1 / 1;             /* 疊在一起 */
+  backface-visibility: hidden;  /* 背面不透 */
+  -webkit-backface-visibility: hidden;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  min-height:140px;             /* 跟你原本一致 */
+}
 
+.fateBack{
+  transform: rotateY(180deg);
+}
 
+.fate.revealed .fateInner{
+  transform: rotateY(180deg);
+}
 
-/* ===== chat bubble ===== */
-.msg{
-  margin-top:14px;
-  padding:14px 16px;
-  border-radius:18px;
-  background:rgba(0,0,0,.34);
-  border:1px solid rgba(216,178,92,.22);
-  box-shadow:0 16px 40px rgba(0,0,0,.35);
-  color:rgba(255,255,255,.92);
-  line-height:1.75;
+/* back 面的文字排版 */
+.fateBack .fateRevealTitle{
+  font-family: var(--display, var(--sans));
+  font-weight:900;
+  letter-spacing:.02em;
+  font-size:15px;
+  margin-bottom:6px;
+}
+
+.fateBack .fateRevealMeta{
   white-space:pre-wrap;
-  display:none;
-  position:relative;
+  color: rgba(255,255,255,.80);
+  line-height:1.6;
+  font-size:13px;
+  margin-bottom:8px;
 }
-
-/* bubble tail (left) */
-.msg::before{
-  content:"";
-  position:absolute;
-  top:16px;
-  left:-10px;
-  width:0;height:0;
-  border-top:10px solid transparent;
-  border-bottom:10px solid transparent;
-  border-right:10px solid rgba(216,178,92,.22); /* border */
-}
-.msg::after{
-  content:"";
-  position:absolute;
-  top:16px;
-  left:-9px;
-  width:0;height:0;
-  border-top:10px solid transparent;
-  border-bottom:10px solid transparent;
-  border-right:10px solid rgba(0,0,0,.34); /* fill */
-}
-
-/* right bubble option */
-.msg.right{
-  background:rgba(216,178,92,.12);
-  border-color:rgba(216,178,92,.28);
-}
-.msg.right::before{
-  left:auto;
-  right:-10px;
-  border-right:none;
-  border-left:10px solid rgba(216,178,92,.28);
-}
-.msg.right::after{
-  left:auto;
-  right:-9px;
-  border-right:none;
-  border-left:10px solid rgba(216,178,92,.12);
-}
-
-/* pop in animation */
-.msg.pop{
-  animation: msgPop .22s ease-out 1;
-}
-@keyframes msgPop{
-  0%{ transform:translateY(4px) scale(.99); opacity:.0; }
-  100%{ transform:translateY(0) scale(1); opacity:1; }
-}
-
 
     .footer{margin-top:14px;display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;color:var(--muted);font-size:12.5px;}
 
+    /* confetti */
     .confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:999;display:none;}
     .confetti span{position:absolute;width:10px;height:14px;border-radius:3px;opacity:.95;transform:translateY(-30px) rotate(0deg);animation: fall 1.35s linear forwards;}
     @keyframes fall{to{transform:translateY(calc(100vh + 40px)) rotate(680deg); opacity:1}}
@@ -332,99 +341,8 @@
     @media (prefers-reduced-motion: reduce){
       .confetti span{animation:none}
       button,.fate{transition:none}
+      .fate.shake, .fate.revealPulse{ animation:none !important; }
     }
-    /* ===== Pick FX ===== */
-.fate{ position:relative; }
-
-.fate.dim{
-  opacity:.55;
-  filter:saturate(.85) contrast(.95);
-}
-
-.fate.glow{
-  border-color: rgba(216,178,92,.55);
-  box-shadow:
-    0 0 0 1px rgba(216,178,92,.18),
-    0 18px 45px rgba(0,0,0,.35),
-    0 0 26px rgba(216,178,92,.18),
-    0 0 50px rgba(139,92,246,.12);
-}
-
-.fate.shake{
-  animation: fateShake .80s ease-in-out 2;
-}
-
-@keyframes fateShake{
-  0%{transform:translate(0,0) rotate(0)}
-  12%{transform:translate(-4px,2px) rotate(-1.6deg)}
-  24%{transform:translate(5px,-3px) rotate(1.8deg)}
-  36%{transform:translate(-5px,-2px) rotate(-1.4deg)}
-  48%{transform:translate(4px,3px) rotate(1.4deg)}
-  60%{transform:translate(-3px,2px) rotate(-1.0deg)}
-  72%{transform:translate(3px,-2px) rotate(1.0deg)}
-  100%{transform:translate(0,0) rotate(0)}
-}
-
-.fate.revealPulse{
-  animation: revealPulse .9s ease-out 1;
-}
-
-@keyframes revealPulse{
-  0%   { transform: scale(1); }
-  35%  { transform: scale(1.02); }
-  100% { transform: scale(1); }
-}
-
-.pickBadge{
-  position:absolute;
-  top:14px;
-  left:14px;
-  padding:6px 10px;
-  border-radius:999px;
-  font-family: var(--mono);
-  font-size:11px;
-  letter-spacing:.6px;
-  text-transform:uppercase;
-  color: rgba(216,178,92,.95);
-  background: rgba(0,0,0,.38);
-  border: 1px solid rgba(216,178,92,.32);
-  box-shadow: 0 12px 28px rgba(0,0,0,.35);
-  pointer-events:none;
-  z-index:3;
-}
-
-/* reduce motion */
-@media (prefers-reduced-motion: reduce){
-  .fate.shake, .fate.revealPulse{ animation:none !important; }
-}
-/* ===== Reveal inside the picked card ===== */
-.fateReveal{
-  display:none;
-  margin-top:12px;
-  padding-top:12px;
-  border-top:1px solid rgba(216,178,92,.18);
-}
-
-.fate.revealed .fateReveal{ display:block; }
-.fate.revealed .spark{ display:none; }          /* 不要跟揭曉重疊 */
-.fate.revealed .fateHint{ display:none; }       /* 揭曉後提示字可隱藏（想留就刪這行） */
-
-.fateRevealTitle{
-  font-family: var(--display, var(--sans));
-  font-weight:900;
-  letter-spacing:.02em;
-  font-size:15px;
-  margin-bottom:6px;
-}
-
-.fateRevealMeta{
-  white-space:pre-wrap;
-  color: rgba(255,255,255,.80);
-  line-height:1.6;
-  font-size:13px;
-  margin-bottom:8px;
-}
-
   </style>
 </head>
 
@@ -471,55 +389,55 @@
         </div>
 
         <div class="cards" id="cards">
+          <!-- Card A -->
           <div class="fate" id="cardA" role="button" tabindex="0" aria-label="Pick card A">
-            <div class="fateTop">
-              <div>
-                <div class="fateTitle">Card A</div>
-                <div class="fateHint">你選的那張，會先公布。</div>
-              </div>
-              <div class="fateLabel">A</div>
-            </div>
-            <div class="spark">tap to pick</div>
-          <div class="fateReveal" aria-live="polite">
-  <div class="fateRevealTitle"></div>
-  <div class="fateRevealMeta"></div>
-  <a class="linkBtn fateRevealLink" href="#" target="_blank" rel="noopener noreferrer">Open map</a>
-</div>
-
-          <div class="fate" id="cardB" role="button" tabindex="0" aria-label="Pick card B">
-            <div class="fateTop">
-              <div>
-                <div class="fateTitle">Card B</div>
-                <div class="fateHint">另一張會晚點揭曉。</div>
-              </div>
-              <div class="fateLabel">B</div>
-            </div>
-            <div class="spark">tap to pick</div>
-         <div class="fateReveal" aria-live="polite">
-  <div class="fateRevealTitle"></div>
-  <div class="fateRevealMeta"></div>
-  <a class="linkBtn fateRevealLink" href="#" target="_blank" rel="noopener noreferrer">Open map</a>
-</div>
-
-        <div class="revealGrid" id="revealGrid" style="display:none;">
-          <div class="event" id="pickedEvent">
-            <div class="eventTitle" id="pickedTitle"></div>
-            <div class="eventMeta" id="pickedMeta"></div>
-            <div class="mini">
-              <a class="linkBtn" id="pickedMap" href="#" target="_blank" rel="noopener noreferrer">Open map</a>
-            </div>
-          </div>
-
-          <div class="event" id="otherEvent" style="display:none;">
-            <div class="eventTitle" id="otherTitle"></div>
-            <div class="eventMeta" id="otherMeta"></div>
-            <div class="mini">
-              <a class="linkBtn" id="otherMap" href="#" target="_blank" rel="noopener noreferrer">Open map</a>
-            </div>
-          </div>
+  <div class="fateInner">
+    <!-- FRONT -->
+    <div class="fateFace fateFront">
+      <div class="fateTop">
+        <div>
+          <div class="fateTitle">Card A</div>
+          <div class="fateHint">你選的那張，會先公布。</div>
         </div>
+        <div class="fateLabel">A</div>
+      </div>
+      <div class="spark">tap to pick</div>
+    </div>
 
-        <div class="msg" id="msg"></div>
+    <!-- BACK -->
+    <div class="fateFace fateBack" aria-live="polite">
+      <div class="fateRevealTitle"></div>
+      <div class="fateRevealMeta"></div>
+      <a class="linkBtn fateRevealLink" href="#" target="_blank" rel="noopener noreferrer">Open map</a>
+    </div>
+  </div>
+</div>
+
+
+          <!-- Card B -->
+          <div class="fate" id="cardB" role="button" tabindex="0" aria-label="Pick card B">
+  <div class="fateInner">
+    <!-- FRONT -->
+    <div class="fateFace fateFront">
+      <div class="fateTop">
+        <div>
+          <div class="fateTitle">Card B</div>
+          <div class="fateHint">另一張會晚點揭曉。</div>
+        </div>
+        <div class="fateLabel">B</div>
+      </div>
+      <div class="spark">tap to pick</div>
+    </div>
+
+    <!-- BACK -->
+    <div class="fateFace fateBack" aria-live="polite">
+      <div class="fateRevealTitle"></div>
+      <div class="fateRevealMeta"></div>
+      <a class="linkBtn fateRevealLink" href="#" target="_blank" rel="noopener noreferrer">Open map</a>
+    </div>
+  </div>
+</div>
+
 
         <div class="actions" id="stepActions" style="display:none;">
           <button class="primary" id="revealOtherBtn">看看另一張卡</button>
@@ -540,19 +458,15 @@
   </main>
 
 <script>
-  // =========================
-  // EDIT HERE（只改這區）
-  // =========================
   const CONFIG = {
     to: "Addie",
     from: "Liz",
 
     countdownTo: "2026-03-06T00:00",
-  // ✅ 改成一般字串（避免顏文字裡的 ` 反引號炸掉）
-  openingText:
-    "嘻嘻想不到吧 雖然沒有用網頁跟你告白\n" +
-    "但還是可以用網頁給你驚喜的｡:.ﾟヽ(*´∀`)ﾉﾟ.:｡\n" +
-    "（依照直覺選就口以囉🥰。）",
+    openingText:
+      "嘻嘻想不到吧 雖然沒有用網頁跟你告白\n" +
+      "但還是可以用網頁給你驚喜的｡:.ﾟヽ(*´∀`)ﾉﾟ.:｡\n" +
+      "（依照直覺選就口以囉🥰。）",
 
     cardA: {
       dateLabel: "2026/3/6（五）",
@@ -567,18 +481,9 @@
       time: "Check-in 時間我們再一起決定",
       note: "Nice and fancy的飯店住好住滿\n隔天早上還有島語早餐buffet唷！",
       mapUrl: "https://maps.app.goo.gl/Goks6L1aohtFGdAAA"
-    },
-
-    twistText:
-`哈哈，但其實——
-我兩個都訂好了顆顆😉
-
-所以你生日那週的行程會長這樣：
-3/6 去吃 A CUT，
-3/7 去漢來住一晚。`
+    }
   };
 
-  // ---- helpers ----
   const el = (id) => document.getElementById(id);
   const prefersReduced = (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) || false;
 
@@ -597,21 +502,6 @@
       dt.getFullYear() + "/" + (dt.getMonth()+1) + "/" + dt.getDate() + " " +
       String(dt.getHours()).padStart(2,"0") + ":" + String(dt.getMinutes()).padStart(2,"0") +
       " (" + w + ")";
-  }
-
-  async function copyToClipboard(text){
-    try { await navigator.clipboard.writeText(text); return true; }
-    catch {
-      try{
-        const ta = document.createElement("textarea");
-        ta.value = text;
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand("copy");
-        ta.remove();
-        return true;
-      } catch { return false; }
-    }
   }
 
   function confettiBurst(){
@@ -634,15 +524,6 @@
     setTimeout(() => { layer.style.display="none"; layer.innerHTML=""; }, 1700);
   }
 
-  function openMap(url){
-    if (!url){
-      el("msg").style.display = "block";
-      el("msg").textContent = "我還沒把地圖連結貼上去 😶\n（你晚點可以把 CONFIG.cardA.mapUrl / cardB.mapUrl 補上）";
-      return;
-    }
-    window.open(url, "_blank", "noopener,noreferrer");
-  }
-
   function pad2(n){ return String(n).padStart(2,"0"); }
   function toICSLocal(y,m,d,hh,mm){ return "" + y + pad2(m) + pad2(d) + "T" + pad2(hh) + pad2(mm) + "00"; }
   function escICS(s){
@@ -654,14 +535,14 @@
   }
 
   function init(){
-    // ---- hydrate header ----
+    // header
     el("title").textContent = "Hi, " + CONFIG.to + " ✨";
     el("subtitle").textContent = "From: " + CONFIG.from + "\n距離你的生日還剩下：";
     el("brandText").textContent = "to:" + (CONFIG.to || "you").toLowerCase();
     el("footRight").textContent = "from:" + (CONFIG.from || "").toLowerCase();
     el("openingText").textContent = CONFIG.openingText;
 
-    // ---- countdown ----
+    // countdown
     const target = parseLocalDateTime(CONFIG.countdownTo);
     el("dateLine").textContent = fmtDateLine(target);
 
@@ -684,7 +565,7 @@
     tick();
     setInterval(tick, 1000);
 
-    // ---- flow open ----
+    // open flow
     const flow = el("flow");
     el("openBtn").addEventListener("click", () => {
       flow.style.display = "block";
@@ -697,27 +578,14 @@
       setTimeout(() => el("peekBtn").textContent = "Tiny hint", 1600);
     });
 
-    // ---- pick logic ----
+    // pick logic
     const cardA = el("cardA");
     const cardB = el("cardB");
-    const revealGrid = el("revealGrid");
-    const otherEvent = el("otherEvent");
-    const msg = el("msg");
-function showMsg(text, side){ // side: "left" | "right"
-  msg.style.display = "block";
-  msg.classList.toggle("right", side === "right");
-  msg.classList.remove("pop");
-  msg.textContent = text;     // ✅ 這行才對
-  void msg.offsetWidth;       // reflow
-  msg.classList.add("pop");
-}
-
-
     const stepActions = el("stepActions");
     const finalActions = el("finalActions");
 
     let picked = null;  // "A" or "B"
-    let step = 0;       // 0 pick, 1 picked shown, 2 other shown + twist
+    let step = 0;       // 0 pick, 1 picked shown, 2 other shown
 
     function setCardDisabled(disabled){
       [cardA, cardB].forEach(c => {
@@ -726,52 +594,35 @@ function showMsg(text, side){ // side: "left" | "right"
       });
     }
 
-    function renderPicked(which){
-      const pickedData = which === "A" ? CONFIG.cardA : CONFIG.cardB;
-      const otherData  = which === "A" ? CONFIG.cardB : CONFIG.cardA;
+    function clearPickFX(){
+      [cardA, cardB].forEach(c => {
+        c.classList.remove("dim","glow","shake","revealPulse","revealed");
+        const b = c.querySelector(".pickBadge");
+        if (b) b.remove();
 
-      el("pickedTitle").textContent = "你選到的是：" + pickedData.title;
-      el("pickedMeta").textContent = pickedData.dateLabel + "\n" + pickedData.time + "\n" + pickedData.note;
-
-      el("otherTitle").textContent = "另一張是：" + otherData.title;
-      el("otherMeta").textContent = otherData.dateLabel + "\n" + otherData.time + "\n" + otherData.note;
-
-const pickedLink = el("pickedMap");
-const otherLink  = el("otherMap");
-
-pickedLink.href = pickedData.mapUrl || "#";
-otherLink.href  = otherData.mapUrl  || "#";
-
-pickedLink.onclick = (e) => {
-  if (!pickedData.mapUrl) { e.preventDefault(); showMsg("我還沒把地圖連結貼上去 😶", "left"); }
-};
-otherLink.onclick = (e) => {
-  if (!otherData.mapUrl) { e.preventDefault(); showMsg("我還沒把地圖連結貼上去 😶", "left"); }
-};
-
-
+        const t = c.querySelector(".fateRevealTitle");
+        const m = c.querySelector(".fateRevealMeta");
+        const a = c.querySelector(".fateRevealLink");
+        if (t) t.textContent = "";
+        if (m) m.textContent = "";
+        if (a){ a.href="#"; a.onclick=null; }
+      });
     }
-function clearPickFX(){
-  [cardA, cardB].forEach(c => {
-    c.classList.remove("dim","glow","shake","revealPulse");
-    const b = c.querySelector(".pickBadge");
-    if (b) b.remove();
-  });
-}
 
-function addPickBadge(which){
-  const pickedEl = which === "A" ? cardA : cardB;
-  const badge = document.createElement("div");
-  badge.className = "pickBadge";
-  badge.textContent = "YOU CHOSE";
-  pickedEl.appendChild(badge);
-}
+    function addPickBadge(which){
+      const pickedEl = which === "A" ? cardA : cardB;
+      const badge = document.createElement("div");
+      badge.className = "pickBadge";
+      badge.textContent = "YOU CHOSE";
+      pickedEl.appendChild(badge);
+    }
+
 function revealInCard(cardEl, data){
-  cardEl.classList.add("revealed");
+  cardEl.classList.add("revealed"); // ✅ 這行會觸發翻面
 
-  const t = cardEl.querySelector(".fateRevealTitle");
-  const m = cardEl.querySelector(".fateRevealMeta");
-  const a = cardEl.querySelector(".fateRevealLink");
+  const t = cardEl.querySelector(".fateBack .fateRevealTitle");
+  const m = cardEl.querySelector(".fateBack .fateRevealMeta");
+  const a = cardEl.querySelector(".fateBack .fateRevealLink");
 
   if (t) t.textContent = data.title || "";
   if (m) m.textContent = (data.dateLabel || "") + "\n" + (data.time || "") + "\n" + (data.note || "");
@@ -784,126 +635,78 @@ function revealInCard(cardEl, data){
       a.onclick = null;
     } else {
       a.href = "#";
-      a.onclick = (e) => { e.preventDefault(); openMap(""); };
+      a.onclick = (e) => { e.preventDefault(); alert("我還沒把地圖連結貼上去 😶"); };
       a.style.opacity = ".85";
+      a.style.pointerEvents = "auto";
     }
   }
 }
 
-function onPick(which){
-  if (step !== 0) return;
 
-  picked = which;
-  step = 1;
+    function onPick(which){
+      if (step !== 0) return;
 
-  clearPickFX();
+      picked = which;
+      step = 1;
 
-  const pickedEl = which === "A" ? cardA : cardB;
-  const otherEl  = which === "A" ? cardB : cardA;
+      clearPickFX();
 
-  const pickedData = which === "A" ? CONFIG.cardA : CONFIG.cardB;
+      const pickedEl = which === "A" ? cardA : cardB;
+      const otherEl  = which === "A" ? cardB : cardA;
+      const pickedData = which === "A" ? CONFIG.cardA : CONFIG.cardB;
 
-  setCardDisabled(true);
+      setCardDisabled(true);
 
-  // 特效：你選的發光+抖，另一張變淡
-  pickedEl.classList.add("glow","shake");
-  otherEl.classList.add("dim");
-  confettiBurst();
+      pickedEl.classList.add("glow","shake");
+      otherEl.classList.add("dim");
+      confettiBurst();
 
-  // 抖完後移除 shake（保留 glow）
-  setTimeout(() => pickedEl.classList.remove("shake"), 850);
+      setTimeout(() => pickedEl.classList.remove("shake"), 850);
 
-  // 直接在卡片內揭曉（延遲一下讓「抽牌感」存在）
-  setTimeout(() => {
-    addPickBadge(which);
-    revealInCard(pickedEl, pickedData);
+      setTimeout(() => {
+        addPickBadge(which);
+        revealInCard(pickedEl, pickedData);
 
-    pickedEl.classList.add("revealPulse");
-    setTimeout(() => pickedEl.classList.remove("revealPulse"), 950);
+        pickedEl.classList.add("revealPulse");
+        setTimeout(() => pickedEl.classList.remove("revealPulse"), 950);
 
-    stepActions.style.display = "flex";
-    finalActions.style.display = "none";
+        stepActions.style.display = "flex";
+        finalActions.style.display = "none";
 
-    pickedEl.scrollIntoView({
-      behavior: prefersReduced ? "auto" : "smooth",
-      block: "start"
-    });
-  }, 650);
-}
+        pickedEl.scrollIntoView({ behavior: prefersReduced ? "auto" : "smooth", block: "start" });
+      }, 650);
+    }
 
-
-  setTimeout(() => {
-    showMsg("命運已決定…\n（先讓我公布你選到的那張ㄅ😗）", "left");
-  }, 700);
-
-  setTimeout(() => {
-    renderPicked(which);
-    revealGrid.style.display = "block";
-    stepActions.style.display = "flex";
-
-    addPickBadge(which);
-    pickedEl.classList.add("revealPulse");
-    setTimeout(() => pickedEl.classList.remove("revealPulse"), 950);
-
-    revealGrid.scrollIntoView({
-      behavior: prefersReduced ? "auto" : "smooth",
-      block: "start"
-    });
-  }, 1600);
-}
-
-
-
-
-    // ✅ 綁事件（一定在 onPick 外面）
+    // bind events
     cardA.addEventListener("click", () => onPick("A"));
     cardB.addEventListener("click", () => onPick("B"));
     cardA.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onPick("A"); } });
     cardB.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onPick("B"); } });
 
-el("revealOtherBtn").addEventListener("click", () => {
-  if (step !== 1) return;
-  step = 2;
+    el("revealOtherBtn").addEventListener("click", () => {
+      if (step !== 1) return;
+      step = 2;
 
-  const otherEl  = picked === "A" ? cardB : cardA;
-  const otherData = picked === "A" ? CONFIG.cardB : CONFIG.cardA;
+      const otherEl  = picked === "A" ? cardB : cardA;
+      const otherData = picked === "A" ? CONFIG.cardB : CONFIG.cardA;
 
-  revealInCard(otherEl, otherData);
-  confettiBurst();
+      revealInCard(otherEl, otherData);
+      confettiBurst();
 
-  stepActions.style.display = "none";
-  finalActions.style.display = "flex";
+      stepActions.style.display = "none";
+      finalActions.style.display = "flex";
 
-  otherEl.scrollIntoView({ behavior: prefersReduced ? "auto" : "smooth", block: "start" });
-});
+      otherEl.scrollIntoView({ behavior: prefersReduced ? "auto" : "smooth", block: "start" });
+    });
 
-
-
-function resetAll(){
-  picked = null;
-  step = 0;
-
-  clearPickFX();
-  setCardDisabled(false);
-
-  [cardA, cardB].forEach(c => {
-    c.classList.remove("revealed","dim","glow","shake","revealPulse");
-    const t = c.querySelector(".fateRevealTitle");
-    const m = c.querySelector(".fateRevealMeta");
-    const a = c.querySelector(".fateRevealLink");
-    if (t) t.textContent = "";
-    if (m) m.textContent = "";
-    if (a){ a.href="#"; a.onclick=null; }
-  });
-
-  stepActions.style.display = "none";
-  finalActions.style.display = "none";
-}
-
-
-  stepActions.style.display = "none";
-  finalActions.style.display = "none";
-}
+    function resetAll(){
+      picked = null;
+      step = 0;
+      setCardDisabled(false);
+      clearPickFX();
+      stepActions.style.display = "none";
+      finalActions.style.display = "none";
+    }
 
     el("resetBtn").addEventListener("click", resetAll);
     el("resetBtn2").addEventListener("click", resetAll);
@@ -963,13 +766,10 @@ function resetAll(){
       a.remove();
       setTimeout(() => URL.revokeObjectURL(url), 800);
 
-      msg.style.display = "block";
-showMsg("已下載行事曆檔（.ics）✨\n你可以加到手機行事曆。", "left");
-
+      alert("已下載行事曆檔（.ics）✨\n你可以加到手機行事曆。");
     });
   }
 
-  // ✅ 最穩的啟動方式
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);
   } else {

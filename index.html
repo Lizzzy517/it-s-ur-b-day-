@@ -76,24 +76,33 @@
     }
     .fateBack{ transform: rotateY(180deg); background: rgba(20, 10, 40, 0.5); }
 
-    /* ✅ You Chose Badge */
-    .pickBadge {
-      position: absolute;
-      top: 10px; right: 10px;
-      padding: 4px 10px; border-radius: 8px;
-      font-family: var(--mono); font-size: 10px; font-weight: 800;
-      color: #000; background: var(--gold);
-      z-index: 10; pointer-events: none;
-      backface-visibility: visible;
-    }
-/* ✅ 確保翻轉後的徽章定位在背面的右上角，且文字方向正確 */
-.fate.revealed .pickBadge { 
-  transform: rotateY(180deg); 
-  opacity: 1;
+/* ✅ 基礎樣式：預設隱藏且準備好旋轉 */
+.pickBadge {
+  position: absolute;
   top: 15px;
   right: 15px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 800;
+  color: #000;
+  background: var(--gold);
+  z-index: 20; /* 確保在最上層 */
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  
+  /* 關鍵 1：讓徽章本身不參與父層的背面隱藏 */
+  backface-visibility: visible;
+  -webkit-backface-visibility: visible;
 }
 
+/* ✅ 當父層翻轉後，修正鏡像問題 */
+.fate.revealed .pickBadge {
+  /* 關鍵 2：父層轉了 180 度，我們也跟著轉 180 度，負負得正字就會變回來 */
+  transform: rotateY(180deg);
+}
     .fateTitle{ font-weight:900; font-family:var(--display); font-size:16px; color:var(--gold); }
     .fateHint{ font-size:13px; color:rgba(255,255,255,.6); margin-top:5px; }
     .spark{ position:absolute; bottom:15px; left:15px; font-size:11px; color:var(--gold); font-family:var(--mono); }
@@ -216,21 +225,20 @@
 
 function addBadge(cardId) {
   const card = el(cardId);
+  // 如果已經有徽章了就不重複加
   if (card.querySelector(".pickBadge")) return;
 
   const badge = document.createElement("div");
   badge.className = "pickBadge";
   badge.textContent = "YOU CHOSE";
-  // 初始設為透明，等卡片翻完再顯示
-  badge.style.opacity = "0";
-  badge.style.transition = "opacity 0.4s ease";
   
+  // 先把徽章塞進 card (最外層)
   card.appendChild(badge);
 
-  // ✅ 延遲 600ms (等卡片轉到一半以上時) 再顯現
+  // ✅ 延遲顯現，配合翻轉動畫
   setTimeout(() => {
     badge.style.opacity = "1";
-  }, 600);
+  }, 700); // 稍微晚一點點，等卡片翻過來之後再浮現
 }
       function reveal(cardId, data) {
         const card = el(cardId);

@@ -4,7 +4,6 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Birthday Fate Cards</title>
-  <meta name="description" content="An interactive invitation — Choose your fate" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Cormorant+Garamond:wght@400;600&display=swap" rel="stylesheet">
@@ -37,7 +36,6 @@
       justify-content:center;
       padding:24px;
       overflow-x:hidden;
-
       background:
         radial-gradient(1200px 900px at 20% 10%, rgba(216,178,92,.10), transparent 55%),
         radial-gradient(900px 700px at 80% 30%, rgba(139,92,246,.22), transparent 60%),
@@ -45,791 +43,220 @@
         linear-gradient(180deg, #070a14, #0c0720);
     }
 
-    body:before{
-      content:"";
-      position:fixed;
-      inset:0;
-      pointer-events:none;
-      opacity:.25;
-      background-image:
-        radial-gradient(circle at 20% 30%, rgba(255,255,255,.55) 1px, transparent 2px),
-        radial-gradient(circle at 70% 20%, rgba(255,255,255,.35) 1px, transparent 2px),
-        radial-gradient(circle at 40% 80%, rgba(255,255,255,.25) 1px, transparent 2px);
-      background-size: 260px 220px, 320px 280px, 380px 340px;
-      background-position: 0 0, 60px 40px, 120px 80px;
-      filter: blur(.1px);
-    }
-
-    h1{
-      font-family: var(--display, var(--sans));
-      margin:0 0 10px;
-      font-size:clamp(24px, 4vw, 36px);
-      line-height:1.15;
-      letter-spacing:-.02em;
-    }
-
-    .sub{
-      margin:0 0 16px;
-      color: rgba(255,255,255,.75);
-      font-size:15px;
-      line-height:1.75;
-      white-space:pre-wrap;
-    }
-
     .wrap{width:min(860px, 100%);}
-    .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;opacity:.92;}
-    .brand{font-family:var(--mono);font-size:13px;letter-spacing:.3px;color:var(--muted);display:flex;gap:10px;align-items:center;}
-    .dot{width:10px;height:10px;border-radius:999px;background:linear-gradient(135deg, var(--accent), #60a5fa);box-shadow:0 0 22px rgba(139,92,246,.55);}
-    .pill{font-family:var(--mono);font-size:12px;padding:8px 10px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:var(--muted);user-select:none;display:flex;gap:8px;align-items:center;}
+    h1{ font-family: var(--display); margin:0 0 10px; font-size:clamp(24px, 4vw, 36px); }
+    .sub{ margin:0 0 16px; color: rgba(255,255,255,.75); font-size:15px; white-space:pre-wrap; }
 
     .card{
-      position:relative;
-      border-radius:var(--radius);
+      position:relative; border-radius:var(--radius);
       background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
-      border: 1px solid rgba(216,178,92,.35);
-      box-shadow:var(--shadow);
-      padding:28px;
-      overflow:hidden;
-    }
-    .card:before{
-      content:"";
-      position:absolute;
-      inset:-2px;
-      background:
-        radial-gradient(700px 300px at 30% 0%, rgba(139,92,246,.30), transparent 55%),
-        radial-gradient(600px 260px at 85% 18%, rgba(34,197,94,.18), transparent 60%);
-      pointer-events:none;
-      opacity:.9;
-    }
-    .card:after{
-      content:"";
-      position:absolute;
-      inset:16px;
-      border-radius: calc(var(--radius) - 10px);
-      border: 1px solid rgba(216,178,92,.26);
-      pointer-events:none;
-    }
-    .card > *{position:relative; z-index:1;}
-
-    .panel{
-      border-radius:18px;
-      border: 1px solid rgba(216,178,92,.22);
-      background: rgba(0,0,0,.25);
-      padding:14px;
-    }
-    .divider{height:1px;background:rgba(255,255,255,.12);margin:18px 0;}
-
-    .countdown{margin:14px 0 10px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;}
-    .tile{
-      border-radius:18px;
-      border: 1px solid rgba(216,178,92,.22);
-      background: rgba(0,0,0,.26);
-      padding:14px 12px;
-      text-align:center;
-    }
-    .num{font-family:var(--mono);font-size:22px;font-weight:850;letter-spacing:.4px;color: rgba(255,255,255,.92);}
-    .label{margin-top:6px;font-size:12px;color: rgba(216,178,92,.78);font-family:var(--mono);}
-
-    .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;}
-    button{
-      border:0;cursor:pointer;border-radius:14px;padding:12px 14px;
-      font-weight:750;letter-spacing:.2px;
-      background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.16);
-      color:var(--text);
-      transition: transform .06s ease, background .2s ease, border-color .2s ease, filter .2s ease;
-    }
-    button:hover{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.22)}
-    button:active{transform:translateY(1px) scale(.99)}
-    button:disabled{opacity:.55;cursor:not-allowed}
-    .primary{
-      background: linear-gradient(135deg, rgba(216,178,92,.90), rgba(139,92,246,.75));
-      border-color: rgba(216,178,92,.35);
-      box-shadow: 0 16px 40px rgba(139,92,246,.22);
-    }
-    .ghost{background:transparent}
-
-    /* Fate cards */
-    .cards{margin-top:12px;display:grid;grid-template-columns: repeat(2, minmax(0, 1fr));gap:12px;}
-    .fate{
-      border-radius:20px;
-      border: 1px solid rgba(216,178,92,.30);
-      background:
-        radial-gradient(500px 220px at 50% 0%, rgba(216,178,92,.10), transparent 60%),
-        rgba(0,0,0,.24);
-      padding:16px;
-      cursor:pointer;
-      user-select:none;
-      transition: transform .08s ease, background .2s ease, border-color .2s ease;
-      min-height:140px;
-      display:flex;
-      flex-direction:column;
-      justify-content:space-between;
-      position:relative;
-      overflow:hidden;
-    }
-    .fate:before{
-      content:"";
-      position:absolute;
-      inset:12px;
-      border-radius:16px;
-      border:1px solid rgba(216,178,92,.22);
-      pointer-events:none;
-    }
-    .fate:after{
-      content:"✦";
-      position:absolute;
-      right:14px;
-      bottom:12px;
-      font-family: var(--display, var(--sans));
-      color: rgba(216,178,92,.75);
-      opacity:.9;
-      pointer-events:none;
-    }
-    .fate:hover{background:rgba(255,255,255,.11);border-color:rgba(255,255,255,.22)}
-    .fate:active{transform:translateY(1px)}
-    .fate.disabled{opacity:.65;cursor:not-allowed; pointer-events:none;}
-
-    .fateTop{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
-    .fateTitle{font-weight:900;font-size:16px;font-family:var(--display, var(--sans));letter-spacing:.03em;}
-    .fateHint{margin-top:6px;color:rgba(255,255,255,.66);font-size:13px;line-height:1.6;}
-    .fateLabel{
-      font-family:var(--mono);
-      font-size:12px;
-      padding:6px 10px;
-      border-radius:999px;
-      background:rgba(0,0,0,.25);
-      border: 1px solid rgba(216,178,92,.28);
-      color: rgba(216,178,92,.92);
-      flex:0 0 auto;
+      border: 1px solid rgba(216,178,92,.35); box-shadow:var(--shadow); padding:28px;
     }
 
-    /* hint badge */
-    .spark{
-      font-family:var(--mono);
-      font-size:12px;
-      color:rgba(255,255,255,.78);
-      position:absolute;
-      top:14px;
-      right:56px;
-      padding:4px 8px;
-      border-radius:999px;
-      background:rgba(0,0,0,.28);
-      border:1px solid rgba(216,178,92,.22);
-      box-shadow:0 10px 24px rgba(0,0,0,.25);
-      pointer-events:none;
+    .panel{ border-radius:18px; border: 1px solid rgba(216,178,92,.22); background: rgba(0,0,0,.25); padding:14px; }
+    .countdown{ margin:14px 0 10px; display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+    .tile{ border-radius:18px; border: 1px solid rgba(216,178,92,.22); background: rgba(0,0,0,.26); padding:14px 12px; text-align:center; }
+    .num{ font-family:var(--mono); font-size:22px; font-weight:850; }
+    .label{ font-size:12px; color: var(--gold); }
+
+    .actions{ display:flex; flex-wrap:wrap; gap:10px; margin-top:12px; }
+    button{ border:0; cursor:pointer; border-radius:14px; padding:12px 14px; font-weight:750; color:var(--text); background:rgba(255,255,255,.1); }
+    .primary{ background: linear-gradient(135deg, rgba(216,178,92,.9), rgba(139,92,246,.75)); }
+
+    /* Fate Cards */
+    .cards{ margin-top:12px; display:grid; grid-template-columns: repeat(2, 1fr); gap:12px; perspective: 1000px; }
+    .fate{ position:relative; min-height:160px; transition: transform 0.6s; transform-style: preserve-3d; cursor:pointer; }
+    .fateInner{ position:relative; width:100%; height:100%; transform-style: preserve-3d; transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+    .fate.revealed .fateInner{ transform: rotateY(180deg); }
+
+    .fateFace{
+      position:absolute; inset:0; backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      border-radius:20px; border: 1px solid rgba(216,178,92,.3); padding:16px;
+      display:flex; flex-direction:column; justify-content:space-between; background: rgba(0,0,0,.3);
     }
+    .fateBack{ transform: rotateY(180deg); background: rgba(20, 10, 40, 0.5); }
 
-    /* link */
-    .linkBtn{
-      font-family: var(--mono);
-      font-size:12px;
-      opacity:.9;
-      color: rgba(216,178,92,.88);
-      text-decoration: underline;
-      cursor: pointer;
-      display:inline-block;
+    /* ✅ You Chose Badge */
+    .pickBadge {
+      position: absolute;
+      top: 10px; right: 10px;
+      padding: 4px 10px; border-radius: 8px;
+      font-family: var(--mono); font-size: 10px; font-weight: 800;
+      color: #000; background: var(--gold);
+      z-index: 10; pointer-events: none;
+      backface-visibility: visible;
     }
-    .linkBtn:visited{ color: rgba(216,178,92,.88); }
-    .linkBtn:hover{ opacity:1; }
+    /* 翻轉後修正鏡像並保持在右上角 */
+    .fate.revealed .pickBadge { transform: rotateY(180deg); }
 
-    /* ===== Pick FX ===== */
-    .fate.dim{ opacity:.55; filter:saturate(.85) contrast(.95); }
-    .fate.glow{
-      border-color: rgba(216,178,92,.55);
-      box-shadow:
-        0 0 0 1px rgba(216,178,92,.18),
-        0 18px 45px rgba(0,0,0,.35),
-        0 0 26px rgba(216,178,92,.18),
-        0 0 50px rgba(139,92,246,.12);
-    }
-    .fate.shake{ animation: fateShake .80s ease-in-out 2; }
-    @keyframes fateShake{
-      0%{transform:translate(0,0) rotate(0)}
-      12%{transform:translate(-4px,2px) rotate(-1.6deg)}
-      24%{transform:translate(5px,-3px) rotate(1.8deg)}
-      36%{transform:translate(-5px,-2px) rotate(-1.4deg)}
-      48%{transform:translate(4px,3px) rotate(1.4deg)}
-      60%{transform:translate(-3px,2px) rotate(-1.0deg)}
-      72%{transform:translate(3px,-2px) rotate(1.0deg)}
-      100%{transform:translate(0,0) rotate(0)}
-    }
-    .fate.revealPulse{ animation: revealPulse .9s ease-out 1; }
-    @keyframes revealPulse{
-      0%{ transform: scale(1); }
-      35%{ transform: scale(1.02); }
-      100%{ transform: scale(1); }
-    }
+    .fateTitle{ font-weight:900; font-family:var(--display); font-size:16px; color:var(--gold); }
+    .fateHint{ font-size:13px; color:rgba(255,255,255,.6); margin-top:5px; }
+    .spark{ position:absolute; bottom:15px; left:15px; font-size:11px; color:var(--gold); font-family:var(--mono); }
+    
+    .fateRevealTitle { font-family: var(--display); font-size: 18px; margin-bottom: 5px; color: var(--gold); }
+    .fateRevealMeta { font-size: 13px; line-height: 1.5; white-space: pre-wrap; }
+    .linkBtn { font-size: 12px; color: var(--gold); text-decoration: underline; margin-top: 10px; }
 
-/* 1. 確保徽章在翻轉過程中與翻轉後都看得到 */
-.pickBadge {
-  position: absolute;
-  top: -10px;    /* 稍微往上飄出邊框一點，增加設計感 */
-  right: -5px;   /* 靠右 */
-  padding: 4px 10px;
-  border-radius: 8px;
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.5px;
-  color: #000;
-  background: var(--gold); /* 使用你定義的金黃色，更醒目 */
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-  z-index: 10;
-  pointer-events: none;
-  /* 關鍵：防止徽章跟著父層翻轉而文字變反 */
-  backface-visibility: visible; 
-}
-
-/* 2. 當父層 .fate 翻轉時，徽章要「轉回來」才不會變鏡像文字 */
-.fate.revealed .pickBadge {
-  transform: rotateY(180deg); 
-  top: 10px;    /* 翻轉後回到卡片內右上角 */
-  right: 10px;
-}
-
-/* 3. 翻轉後隱藏原本正面的所有文字內容與提示 */
-.fate.revealed .fateFront * {
-  opacity: 0;
-  pointer-events: none;
-}.pickBadge{
-  position:absolute;
-  top:14px;
-  right:14px;   /* ✅ 改成右上 */
-  left:auto;    /* ✅ 取消 left */
-  padding:6px 10px;
-  border-radius:999px;
-  font-family: var(--mono);
-  font-size:11px;
-  letter-spacing:.6px;
-  text-transform:uppercase;
-  color: rgba(216,178,92,.95);
-  background: rgba(0,0,0,.38);
-  border: 1px solid rgba(216,178,92,.32);
-  box-shadow: 0 12px 28px rgba(0,0,0,.35);
-  pointer-events:none;
-  z-index:3;
-}
-
-
-/* ===== Flip reveal (front/back) ===== */
-.fate{
-  perspective: 1000px; /* 3D 深度 */
-}
-
-.fateInner{
-  display:grid;                 /* 兩面疊在同一格，且高度會自動撐成最大那面 */
-  transform-style: preserve-3d;
-  transition: transform .85s cubic-bezier(.2,.8,.2,1);
-  will-change: transform;
-}
-
-.fateFace{
-  grid-area: 1 / 1;             /* 疊在一起 */
-  backface-visibility: hidden;  /* 背面不透 */
-  -webkit-backface-visibility: hidden;
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
-  min-height:140px;             /* 跟你原本一致 */
-}
-
-.fateBack{
-  transform: rotateY(180deg);
-}
-
-.fate.revealed .fateInner{
-  transform: rotateY(180deg);
-}
-
-/* back 面的文字排版 */
-.fateBack .fateRevealTitle{
-  font-family: var(--display, var(--sans));
-  font-weight:900;
-  letter-spacing:.02em;
-  font-size:15px;
-  margin-bottom:6px;
-}
-
-.fateBack .fateRevealMeta{
-  white-space:pre-wrap;
-  color: rgba(255,255,255,.80);
-  line-height:1.6;
-  font-size:13px;
-  margin-bottom:8px;
-}
-
-    .footer{margin-top:14px;display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;color:var(--muted);font-size:12.5px;}
-
-    /* confetti */
-    .confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:999;display:none;}
-    .confetti span{position:absolute;width:10px;height:14px;border-radius:3px;opacity:.95;transform:translateY(-30px) rotate(0deg);animation: fall 1.35s linear forwards;}
-    @keyframes fall{to{transform:translateY(calc(100vh + 40px)) rotate(680deg); opacity:1}}
+    .confetti{position:fixed;inset:0;pointer-events:none;z-index:999;display:none;}
+    .confetti span{position:absolute;width:10px;height:10px;animation:fall 1.5s linear forwards;}
+    @keyframes fall{to{transform:translateY(100vh) rotate(720deg);}}
 
     @media (max-width: 560px){
-      .countdown{grid-template-columns: repeat(2, minmax(0, 1fr));}
       .cards{grid-template-columns: 1fr;}
-      .pill{display:none}
-      .card{padding:22px}
-    }
-    @media (prefers-reduced-motion: reduce){
-      .confetti span{animation:none}
-      button,.fate{transition:none}
-      .fate.shake, .fate.revealPulse{ animation:none !important; }
+      .countdown{grid-template-columns: repeat(2, 1fr);}
     }
   </style>
 </head>
-
 <body>
   <div class="confetti" id="confetti"></div>
 
   <main class="wrap">
-    <div class="topbar">
-      <div class="brand"><span class="dot"></span><span id="brandText">invitation</span></div>
-      <div class="pill">Happy · Addie · Day</div>
-    </div>
-
-    <section class="card" aria-live="polite">
+    <section class="card">
       <h1 id="title">Hey ✨</h1>
       <p class="sub" id="subtitle"></p>
 
       <div class="panel">
-        <div style="font-family:var(--mono); color:rgba(255,255,255,.75); font-size:12px;">countdown</div>
-
-        <div class="countdown" aria-label="countdown">
+        <div class="countdown">
           <div class="tile"><div class="num" id="d">--</div><div class="label">days</div></div>
           <div class="tile"><div class="num" id="h">--</div><div class="label">hours</div></div>
           <div class="tile"><div class="num" id="m">--</div><div class="label">mins</div></div>
           <div class="tile"><div class="num" id="s">--</div><div class="label">secs</div></div>
         </div>
-
-        <div style="color:rgba(255,255,255,.62); font-size:13px; line-height:1.6;">
-          <span id="dateLine"></span>
-        </div>
-
+        <div id="dateLine" style="font-size:12px; opacity:0.6; margin-top:10px;"></div>
         <div class="actions">
           <button class="primary" id="openBtn">Open</button>
-          <button class="ghost" id="peekBtn">Tiny hint</button>
         </div>
       </div>
 
-      <div class="divider"></div>
-
-      <div id="flow" style="display:none;">
-        <div class="sub" id="openingText"></div>
-
-        <div class="sub" style="margin-top:6px;margin-bottom:8px;color:rgba(255,255,255,.78);">
-          選一張卡片吧。那張卡片會決定——你今年生日「怎麼過」的命運。
+      <div id="flow" style="display:none; margin-top:20px;">
+        <p class="sub" id="openingText"></p>
+        <div class="cards">
+          <div class="fate" id="cardA">
+            <div class="fateInner">
+              <div class="fateFace fateFront">
+                <div>
+                  <div class="fateTitle">Card A</div>
+                  <div class="fateHint">選中的將會優先揭曉。</div>
+                </div>
+                <div class="spark">✦ tap to pick</div>
+              </div>
+              <div class="fateFace fateBack">
+                <div class="fateRevealTitle"></div>
+                <div class="fateRevealMeta"></div>
+                <a class="linkBtn fateRevealLink" target="_blank">Open map</a>
+              </div>
+            </div>
+          </div>
+          <div class="fate" id="cardB">
+            <div class="fateInner">
+              <div class="fateFace fateFront">
+                <div>
+                  <div class="fateTitle">Card B</div>
+                  <div class="fateHint">另一種可能性。</div>
+                </div>
+                <div class="spark">✦ tap to pick</div>
+              </div>
+              <div class="fateFace fateBack">
+                <div class="fateRevealTitle"></div>
+                <div class="fateRevealMeta"></div>
+                <a class="linkBtn fateRevealLink" target="_blank">Open map</a>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div class="cards" id="cards">
-          <!-- Card A -->
-          <div class="fate" id="cardA" role="button" tabindex="0" aria-label="Pick card A">
-  <div class="fateInner">
-    <!-- FRONT -->
-    <div class="fateFace fateFront">
-      <div class="fateTop">
-        <div>
-          <div class="fateTitle">Card A</div>
-          <div class="fateHint">你選的那張，會先公布。</div>
-        </div>
-        <div class="fateLabel">A</div>
-      </div>
-      <div class="spark">tap to pick</div>
-    </div>
-
-    <!-- BACK -->
-    <div class="fateFace fateBack" aria-live="polite">
-      <div class="fateRevealTitle"></div>
-      <div class="fateRevealMeta"></div>
-      <a class="linkBtn fateRevealLink" href="#" target="_blank" rel="noopener noreferrer">Open map</a>
-    </div>
-  </div>
-</div>
-
-
-          <!-- Card B -->
-          <div class="fate" id="cardB" role="button" tabindex="0" aria-label="Pick card B">
-  <div class="fateInner">
-    <!-- FRONT -->
-    <div class="fateFace fateFront">
-      <div class="fateTop">
-        <div>
-          <div class="fateTitle">Card B</div>
-          <div class="fateHint">另一張會晚點揭曉。</div>
-        </div>
-        <div class="fateLabel">B</div>
-      </div>
-      <div class="spark">tap to pick</div>
-    </div>
-
-    <!-- BACK -->
-    <div class="fateFace fateBack" aria-live="polite">
-      <div class="fateRevealTitle"></div>
-      <div class="fateRevealMeta"></div>
-      <a class="linkBtn fateRevealLink" href="#" target="_blank" rel="noopener noreferrer">Open map</a>
-    </div>
-  </div>
-</div>
-
-
-        <div class="actions" id="stepActions" style="display:none;">
+        <div class="actions" id="stepActions" style="display:none; margin-top:20px;">
           <button class="primary" id="revealOtherBtn">看看另一張卡</button>
-          <button class="ghost" id="resetBtn">Reset</button>
+          <button id="resetBtn">重選一次</button>
         </div>
-
-        <div class="actions" id="finalActions" style="display:none;">
-          <button class="primary" id="icsBtn">Add to Calendar</button>
-          <button class="ghost" id="resetBtn2">Reset</button>
-        </div>
-      </div>
-
-      <div class="footer">
-        <div>Choose your fate ✨</div>
-        <div style="font-family:var(--mono); font-size:12px; opacity:.8;" id="footRight"></div>
       </div>
     </section>
   </main>
 
-<script>
-  const CONFIG = {
-    to: "Addie",
-    from: "Liz",
+  <script>
+    const CONFIG = {
+      to: "Addie",
+      from: "Liz",
+      countdownTo: "2026-03-06T00:00",
+      openingText: "嘿嘿，選一張卡片吧！\n這將決定你今年生日的命運 ✨",
+      cardA: { title: "A CUT · 國賓", dateLabel: "2026/3/6", time: "19:00", note: "只要人出現就好💕", mapUrl: "https://maps.app.goo.gl/YyZ9L" },
+      cardB: { title: "漢來飯店一晚", dateLabel: "2026/3/7", time: "Check-in 待定", note: "隔天還有島語早餐唷！", mapUrl: "https://maps.app.goo.gl/hotel" }
+    };
 
-    countdownTo: "2026-03-06T00:00",
-    openingText:
-      "嘻嘻想不到吧 雖然沒有用網頁跟你告白\n" +
-      "但還是可以用網頁給你驚喜的｡:.ﾟヽ(*´∀`)ﾉﾟ.:｡\n" +
-      "（依照直覺選就口以囉🥰。）",
+    const el = id => document.getElementById(id);
 
-    cardA: {
-      dateLabel: "2026/3/6（五）",
-      title: "A CUT · 國賓",
-      time: "19:00",
-      note: "恭喜你選到全世界最有用的身心靈課程\n只要人出現就好💕",
-      mapUrl: "https://maps.app.goo.gl/hT77xj62Pigd9uqaA"
-    },
-    cardB: {
-      dateLabel: "2026/3/7（六）",
-      title: "漢來飯店一晚",
-      time: "Check-in 時間我們再一起決定",
-      note: "Nice and fancy的飯店住好住滿\n隔天早上還有島語早餐buffet唷！",
-      mapUrl: "https://maps.app.goo.gl/Goks6L1aohtFGdAAA"
-    }
-  };
+    function init() {
+      el("title").textContent = "Hi, " + CONFIG.to;
+      el("subtitle").textContent = "From: " + CONFIG.from + "\n距離生日還有：";
+      el("openingText").textContent = CONFIG.openingText;
 
-  const el = (id) => document.getElementById(id);
-  const prefersReduced = (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) || false;
+      // Countdown logic
+      const target = new Date(CONFIG.countdownTo).getTime();
+      setInterval(() => {
+        const now = new Date().getTime();
+        const diff = target - now;
+        if (diff < 0) return;
+        el("d").textContent = Math.floor(diff / 86400000);
+        el("h").textContent = Math.floor((diff % 86400000) / 3600000);
+        el("m").textContent = Math.floor((diff % 3600000) / 60000);
+        el("s").textContent = Math.floor((diff % 60000) / 1000);
+      }, 1000);
 
-  function parseLocalDateTime(s){
-    const parts = s.split("T");
-    const date = parts[0];
-    const time = parts[1] || "00:00";
-    const ymd = date.split("-").map(Number);
-    const hm = time.split(":").map(Number);
-    return new Date(ymd[0], ymd[1]-1, ymd[2], hm[0] || 0, hm[1] || 0, 0);
-  }
+      el("openBtn").addEventListener("click", () => {
+        el("flow").style.display = "block";
+        el("flow").scrollIntoView({ behavior: "smooth" });
+      });
 
-  function fmtDateLine(dt){
-    const w = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][dt.getDay()];
-    return "counting down to: " +
-      dt.getFullYear() + "/" + (dt.getMonth()+1) + "/" + dt.getDate() + " " +
-      String(dt.getHours()).padStart(2,"0") + ":" + String(dt.getMinutes()).padStart(2,"0") +
-      " (" + w + ")";
-  }
+      let picked = null;
 
-  function confettiBurst(){
-    if (prefersReduced) return;
-    const layer = el("confetti");
-    layer.innerHTML = "";
-    layer.style.display = "block";
-    const n = 70;
-    for (let i=0;i<n;i++){
-      const s = document.createElement("span");
-      s.style.left = (Math.random()*100) + "vw";
-      s.style.top = (-20 - Math.random()*30) + "px";
-      s.style.animationDelay = (Math.random()*0.35) + "s";
-      s.style.width = (8 + Math.random()*8) + "px";
-      s.style.height = (10 + Math.random()*10) + "px";
-      const hue = Math.floor(Math.random()*360);
-      s.style.background = "hsl(" + hue + " 90% 60%)";
-      layer.appendChild(s);
-    }
-    setTimeout(() => { layer.style.display="none"; layer.innerHTML=""; }, 1700);
-  }
-
-  function pad2(n){ return String(n).padStart(2,"0"); }
-  function toICSLocal(y,m,d,hh,mm){ return "" + y + pad2(m) + pad2(d) + "T" + pad2(hh) + pad2(mm) + "00"; }
-  function escICS(s){
-    return (s||"")
-      .replace(/\\/g,"\\\\")
-      .replace(/\n/g,"\\n")
-      .replace(/,/g,"\\,")
-      .replace(/;/g,"\\;");
-  }
-
-  function init(){
-    // header
-    el("title").textContent = "Hi, " + CONFIG.to + " ✨";
-    el("subtitle").textContent = "From: " + CONFIG.from + "\n距離你的生日還剩下：";
-    el("brandText").textContent = "to:" + (CONFIG.to || "you").toLowerCase();
-    el("footRight").textContent = "from:" + (CONFIG.from || "").toLowerCase();
-    el("openingText").textContent = CONFIG.openingText;
-
-    // countdown
-    const target = parseLocalDateTime(CONFIG.countdownTo);
-    el("dateLine").textContent = fmtDateLine(target);
-
-    function tick(){
-      const now = new Date();
-      let diff = target.getTime() - now.getTime();
-      if (diff <= 0){
-        el("d").textContent = "0";
-        el("h").textContent = "0";
-        el("m").textContent = "0";
-        el("s").textContent = "0";
-        return;
+      function addBadge(cardId) {
+        const card = el(cardId);
+        if (card.querySelector(".pickBadge")) return;
+        const badge = document.createElement("div");
+        badge.className = "pickBadge";
+        badge.textContent = "YOU CHOSE";
+        card.appendChild(badge);
       }
-      const sec = Math.floor(diff / 1000);
-      el("d").textContent = String(Math.floor(sec / 86400));
-      el("h").textContent = String(Math.floor((sec % 86400) / 3600));
-      el("m").textContent = String(Math.floor((sec % 3600) / 60));
-      el("s").textContent = String(sec % 60);
-    }
-    tick();
-    setInterval(tick, 1000);
 
-    // open flow
-    const flow = el("flow");
-    el("openBtn").addEventListener("click", () => {
-      flow.style.display = "block";
-      confettiBurst();
-      flow.scrollIntoView({ behavior: prefersReduced ? "auto" : "smooth", block: "start" });
-    });
+      function reveal(cardId, data) {
+        const card = el(cardId);
+        card.querySelector(".fateRevealTitle").textContent = data.title;
+        card.querySelector(".fateRevealMeta").textContent = `${data.dateLabel}\n${data.time}\n${data.note}`;
+        card.querySelector(".fateRevealLink").href = data.mapUrl;
+        
+        // 移除 tap to pick
+        const spark = card.querySelector(".spark");
+        if(spark) spark.remove();
 
-    el("peekBtn").addEventListener("click", () => {
-      el("peekBtn").textContent = "hint: choose a card. fate decides.";
-      setTimeout(() => el("peekBtn").textContent = "Tiny hint", 1600);
-    });
+        card.classList.add("revealed");
+      }
 
-    // pick logic
-    const cardA = el("cardA");
-    const cardB = el("cardB");
-    const stepActions = el("stepActions");
-    const finalActions = el("finalActions");
+      el("cardA").onclick = () => {
+        if (picked) return;
+        picked = "A";
+        addBadge("cardA");
+        reveal("cardA", CONFIG.cardA);
+        el("stepActions").style.display = "flex";
+      };
 
-    let picked = null;  // "A" or "B"
-    let step = 0;       // 0 pick, 1 picked shown, 2 other shown
+      el("cardB").onclick = () => {
+        if (picked) return;
+        picked = "B";
+        addBadge("cardB");
+        reveal("cardB", CONFIG.cardB);
+        el("stepActions").style.display = "flex";
+      };
 
-    function setCardDisabled(disabled){
-      [cardA, cardB].forEach(c => {
-        c.classList.toggle("disabled", disabled);
-        c.setAttribute("aria-disabled", disabled ? "true" : "false");
-      });
-    }
+      el("revealOtherBtn").onclick = () => {
+        if (picked === "A") reveal("cardB", CONFIG.cardB);
+        else reveal("cardA", CONFIG.cardA);
+        el("revealOtherBtn").style.display = "none";
+      };
 
-    function clearPickFX(){
-      [cardA, cardB].forEach(c => {
-        c.classList.remove("dim","glow","shake","revealPulse","revealed");
-        const b = c.querySelector(".pickBadge");
-        if (b) b.remove();
-
-        const t = c.querySelector(".fateRevealTitle");
-        const m = c.querySelector(".fateRevealMeta");
-        const a = c.querySelector(".fateRevealLink");
-        if (t) t.textContent = "";
-        if (m) m.textContent = "";
-        if (a){ a.href="#"; a.onclick=null; }
-      });
+      el("resetBtn").onclick = () => location.reload();
     }
 
-function addPickBadge(which){
-  const pickedEl = which === "A" ? cardA : cardB;
-
-  // 先移除舊的（避免重複）
-  const old = pickedEl.querySelector(".pickBadge");
-  if (old) old.remove();
-
-  // ✅ 徽章只塞在正面
-  const front = pickedEl.querySelector(".fateFront") || pickedEl;
-  const badge = document.createElement("div");
-  badge.className = "pickBadge";
-  badge.textContent = "YOU CHOSE";
-  front.appendChild(badge);
-}
-
-
-function revealInCard(cardEl, data){
-function addPickBadge(which) {
-  const pickedEl = which === "A" ? cardA : cardB;
-  const old = pickedEl.querySelector(".pickBadge");
-  if (old) old.remove();
-
-  // 將徽章直接加在 fate 本體上，而不是 fateFront 裡面
-  // 這樣它才不會隨著 fateFront 一起被隱藏
-  const badge = document.createElement("div");
-  badge.className = "pickBadge";
-  badge.textContent = "YOU CHOSE";
-  pickedEl.appendChild(badge);
-}
-
-function revealInCard(cardEl, data) {
-  // 1. 填充內容
-  const t = cardEl.querySelector(".fateBack .fateRevealTitle");
-  const m = cardEl.querySelector(".fateBack .fateRevealMeta");
-  const a = cardEl.querySelector(".fateBack .fateRevealLink");
-
-  if (t) t.textContent = data.title || "";
-  if (m) m.textContent = (data.dateLabel || "") + "\n" + (data.time || "") + "\n" + (data.note || "");
-
-  // 2. 移除 tap to pick (spark)
-  const spark = cardEl.querySelector(".spark");
-  if (spark) spark.remove(); // 直接從 DOM 移除，保證消失
-
-  // 3. 執行翻轉
-  cardEl.classList.add("revealed");
-
-  if (a) {
-    if (data.mapUrl) {
-      a.href = data.mapUrl;
-      a.style.display = "inline-block";
-    } else {
-      a.style.display = "none";
-    }
-  }
-}
-    function onPick(which){
-      if (step !== 0) return;
-
-      picked = which;
-      step = 1;
-
-      clearPickFX();
-
-      const pickedEl = which === "A" ? cardA : cardB;
-      const otherEl  = which === "A" ? cardB : cardA;
-      const pickedData = which === "A" ? CONFIG.cardA : CONFIG.cardB;
-
-      setCardDisabled(true);
-
-      pickedEl.classList.add("glow","shake");
-      otherEl.classList.add("dim");
-      confettiBurst();
-
-      setTimeout(() => pickedEl.classList.remove("shake"), 850);
-
-      setTimeout(() => {
-        addPickBadge(which);
-        revealInCard(pickedEl, pickedData);
-
-        pickedEl.classList.add("revealPulse");
-        setTimeout(() => pickedEl.classList.remove("revealPulse"), 950);
-
-        stepActions.style.display = "flex";
-        finalActions.style.display = "none";
-
-        pickedEl.scrollIntoView({ behavior: prefersReduced ? "auto" : "smooth", block: "start" });
-      }, 650);
-    }
-
-    // bind events
-    cardA.addEventListener("click", () => onPick("A"));
-    cardB.addEventListener("click", () => onPick("B"));
-    cardA.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onPick("A"); } });
-    cardB.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onPick("B"); } });
-
-    el("revealOtherBtn").addEventListener("click", () => {
-      if (step !== 1) return;
-      step = 2;
-
-      const otherEl  = picked === "A" ? cardB : cardA;
-      const otherData = picked === "A" ? CONFIG.cardB : CONFIG.cardA;
-
-      revealInCard(otherEl, otherData);
-      confettiBurst();
-
-      stepActions.style.display = "none";
-      finalActions.style.display = "flex";
-
-      otherEl.scrollIntoView({ behavior: prefersReduced ? "auto" : "smooth", block: "start" });
-    });
-
-    function resetAll(){
-      picked = null;
-      step = 0;
-      setCardDisabled(false);
-      clearPickFX();
-      stepActions.style.display = "none";
-      finalActions.style.display = "none";
-    }
-
-    el("resetBtn").addEventListener("click", resetAll);
-    el("resetBtn2").addEventListener("click", resetAll);
-
-    function buildICS(){
-      const e1 = parseLocalDateTime(CONFIG.countdownTo);
-      const e1end = new Date(e1.getTime() + 2*60*60*1000);
-
-      const y = e1.getFullYear();
-      const e2 = new Date(y, 2, 7, 20, 0, 0);
-      const e2end = new Date(e2.getTime() + 12*60*60*1000);
-
-      const uidBase = Date.now() + "-" + Math.random().toString(16).slice(2);
-
-      const lines = [
-        "BEGIN:VCALENDAR",
-        "VERSION:2.0",
-        "PRODID:-//fate-cards//birthday//ZH",
-        "CALSCALE:GREGORIAN",
-        "METHOD:PUBLISH",
-
-        "BEGIN:VEVENT",
-        "UID:" + uidBase + "-1@inv",
-        "DTSTAMP:" + toICSLocal(e1.getFullYear(), e1.getMonth()+1, e1.getDate(), e1.getHours(), e1.getMinutes()),
-        "DTSTART:" + toICSLocal(e1.getFullYear(), e1.getMonth()+1, e1.getDate(), e1.getHours(), e1.getMinutes()),
-        "DTEND:" + toICSLocal(e1end.getFullYear(), e1end.getMonth()+1, e1end.getDate(), e1end.getHours(), e1end.getMinutes()),
-        "SUMMARY:" + escICS("Birthday Dinner · " + CONFIG.cardA.title),
-        "DESCRIPTION:" + escICS(CONFIG.cardA.note + "\n\nFrom: " + CONFIG.from),
-        CONFIG.cardA.mapUrl ? ("URL:" + escICS(CONFIG.cardA.mapUrl)) : "",
-        "END:VEVENT",
-
-        "BEGIN:VEVENT",
-        "UID:" + uidBase + "-2@inv",
-        "DTSTAMP:" + toICSLocal(e2.getFullYear(), e2.getMonth()+1, e2.getDate(), e2.getHours(), e2.getMinutes()),
-        "DTSTART:" + toICSLocal(e2.getFullYear(), e2.getMonth()+1, e2.getDate(), e2.getHours(), e2.getMinutes()),
-        "DTEND:" + toICSLocal(e2end.getFullYear(), e2end.getMonth()+1, e2end.getDate(), e2end.getHours(), e2end.getMinutes()),
-        "SUMMARY:" + escICS("Overnight · " + CONFIG.cardB.title),
-        "DESCRIPTION:" + escICS(CONFIG.cardB.note + "\n\nFrom: " + CONFIG.from),
-        CONFIG.cardB.mapUrl ? ("URL:" + escICS(CONFIG.cardB.mapUrl)) : "",
-        "END:VEVENT",
-
-        "END:VCALENDAR"
-      ].filter(Boolean);
-
-      return lines.join("\r\n");
-    }
-
-    el("icsBtn").addEventListener("click", () => {
-      const ics = buildICS();
-      const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "birthday-fate-cards.ics";
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      setTimeout(() => URL.revokeObjectURL(url), 800);
-
-      alert("已下載行事曆檔（.ics）✨\n你可以加到手機行事曆。");
-    });
-  }
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", init);
-  } else {
     init();
-  }
-</script>
-
+  </script>
 </body>
 </html>

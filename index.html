@@ -195,7 +195,20 @@
         cardC.classList.add("show");
         cardC.scrollIntoView({ behavior: "smooth" });
       }, 1000);
-    };
+    };document.getElementById("revealOtherBtn").onclick = () => {
+  const otherId = (picked === 'A') ? 'cardB' : 'cardA';
+  document.getElementById(otherId).classList.add("revealed");
+  document.getElementById("revealOtherBtn").style.display = "none";
+  
+  // ✅ 改為延遲 2.5 秒，讓驚喜感發酵
+  setTimeout(() => {
+    const cardC = document.getElementById("cardC");
+    cardC.classList.add("show");
+    
+    // 平滑滾動到 Card C 的位置
+    cardC.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, 2500); 
+};
   </script>
 </body>
 </html>

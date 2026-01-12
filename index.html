@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Birthday Fate Cards</title>
+  <title>Birthday Fate Cards for Addie</title>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Cormorant+Garamond:wght@400;600&display=swap" rel="stylesheet">
 
   <style>
-    :root{
-      --bg1:#0b1020; --text:rgba(255,255,255,.92);
+    :root {
+      --bg1: #0b1020; --text: rgba(255,255,255,.92);
       --gold: #d8b25c; --radius: 22px;
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
       --display: "Cinzel", serif;
@@ -18,6 +18,7 @@
       margin: 0; font-family: "Cormorant Garamond", serif; color: var(--text);
       display: flex; align-items: center; justify-content: center; min-height: 100vh;
       background: radial-gradient(circle at center, #130b2b, #070a14); padding: 20px;
+      line-height: 1.5;
     }
 
     .wrap { width: min(860px, 100%); }
@@ -27,15 +28,17 @@
       box-shadow: 0 20px 50px rgba(0,0,0,0.5);
     }
 
+    /* Countdown Tiles */
     .countdown { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 20px 0; }
     .tile { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 15px; text-align: center; border: 1px solid rgba(216,178,92,0.2); }
     .num { font-family: var(--mono); font-size: 24px; font-weight: bold; display: block; }
     .label { font-size: 12px; color: var(--gold); }
 
+    /* Cards Layout */
     .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; perspective: 1200px; }
     
-    /* 3D Card */
-    .fate { position: relative; height: 180px; cursor: pointer; }
+    /* 3D Flip Logic */
+    .fate { position: relative; height: 200px; cursor: pointer; }
     .fateInner {
       position: relative; width: 100%; height: 100%;
       transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -47,59 +50,80 @@
       position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden;
       border-radius: 20px; border: 1px solid rgba(216,178,92,0.3); padding: 20px;
       display: flex; flex-direction: column; justify-content: space-between;
-      background: rgba(15, 15, 25, 0.9);
+      background: rgba(15, 15, 25, 0.95);
     }
 
-    .fateBack { transform: rotateY(180deg); background: rgba(25, 20, 45, 0.95); }
+    .fateBack { transform: rotateY(180deg); background: rgba(25, 20, 45, 0.98); }
 
-    /* Badge */
+    /* "YOU CHOSE" Badge on Back */
     .pickBadge {
       position: absolute; top: 12px; right: 12px;
       padding: 4px 10px; border-radius: 6px;
       background: var(--gold); color: #000;
       font-family: var(--mono); font-size: 10px; font-weight: 900;
-      opacity: 0; transition: opacity 0.4s ease 0.6s; z-index: 5;
+      opacity: 0; transition: opacity 0.4s ease 0.7s; z-index: 5;
     }
     .fate.is-picked .pickBadge { opacity: 1; }
 
-    /* Card C Specific - 特別驚喜樣式 */
+    /* Card C Specific */
     #cardC { 
-      grid-column: 1 / -1; height: auto; min-height: 120px; 
-      display: none; opacity: 0; transform: translateY(20px);
-      transition: all 0.8s ease; 
-      background: linear-gradient(135deg, rgba(216,178,92,0.2), rgba(139,92,246,0.2));
-      border: 2px solid var(--gold);
+      grid-column: 1 / -1; height: auto; display: none; opacity: 0; 
+      transform: translateY(30px); margin-top: 20px;
+      transition: opacity 1.5s ease, transform 1.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+      background: linear-gradient(135deg, rgba(216,178,92,0.15), rgba(139,92,246,0.15));
+      border: 2px solid var(--gold); padding: 25px; border-radius: 20px;
     }
     #cardC.show { display: block; opacity: 1; transform: translateY(0); }
 
+    /* Receipt & Stamp */
+    .receipt-wrapper { display: flex; gap: 15px; margin-top: 20px; justify-content: center; }
+    .receipt-box { position: relative; width: 45%; max-width: 180px; }
+    .receipt-img { 
+        width: 100%; border-radius: 8px; border: 1px solid rgba(216,178,92,0.4); 
+        box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    }
+    .stamp {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-25deg);
+      border: 3px solid #ff4d4d; color: #ff4d4d; font-family: var(--mono); font-size: 12px;
+      font-weight: 900; padding: 4px 8px; border-radius: 4px; text-transform: uppercase;
+      opacity: 0.9; background: rgba(0,0,0,0.2); pointer-events: none;
+    }
+
+    /* Text & Buttons */
     .fateTitle { font-family: var(--display); font-size: 18px; color: var(--gold); margin: 0; }
     .fateRevealTitle { font-family: var(--display); font-size: 20px; color: var(--gold); margin-bottom: 8px; }
-    .fateRevealMeta { font-size: 14px; line-height: 1.6; color: rgba(255,255,255,0.9); }
-
+    .fateRevealMeta { font-size: 14px; white-space: pre-line; color: rgba(255,255,255,0.9); }
+    
     button { 
-      padding: 12px 20px; border-radius: 12px; border: none; cursor: pointer;
+      padding: 12px 24px; border-radius: 12px; border: none; cursor: pointer;
       font-weight: bold; background: rgba(255,255,255,0.1); color: white; margin-top: 15px;
+      transition: 0.3s;
     }
-    .primary { background: linear-gradient(135deg, var(--gold), #8b5cf6); }
+    .primary { background: linear-gradient(135deg, var(--gold), #8b5cf6); box-shadow: 0 4px 15px rgba(216,178,92,0.3); }
+    .primary:hover { transform: scale(1.05); }
 
-    @media (max-width: 500px) { .cards { grid-template-columns: 1fr; } }
+    @media (max-width: 500px) { .cards { grid-template-columns: 1fr; } .num { font-size: 20px; } }
   </style>
 </head>
 <body>
 
   <main class="wrap">
     <section class="card-container">
-      <h1 id="title">Hey ✨</h1>
+      <h1 id="title" style="font-family: var(--display); color: var(--gold);">Hey ✨</h1>
+      
       <div class="countdown">
         <div class="tile"><span class="num" id="d">0</span><span class="label">days</span></div>
         <div class="tile"><span class="num" id="h">0</span><span class="label">hours</span></div>
         <div class="tile"><span class="num" id="m">0</span><span class="label">mins</span></div>
         <div class="tile"><span class="num" id="s">0</span><span class="label">secs</span></div>
       </div>
-      <button class="primary" id="openBtn">Open Invitation</button>
+      
+      <div style="text-align: center;">
+        <button class="primary" id="openBtn">Open Invitation</button>
+      </div>
 
       <div id="flow" style="display:none; margin-top:30px;">
-        <p id="openingText" style="margin-bottom:20px;"></p>
+        <p id="openingText" style="text-align:center; font-style: italic; margin-bottom: 25px;"></p>
         
         <div class="cards">
           <div class="fate" id="cardA" onclick="handlePick('A')">
@@ -111,8 +135,8 @@
               <div class="fateFace fateBack">
                 <div class="pickBadge">YOU CHOSE</div>
                 <div class="fateRevealTitle">A CUT · 國賓</div>
-                <div class="fateRevealMeta">2026/3/6 19:00<br>只要人出現就好💕</div>
-                <a class="linkBtn" id="linkA" target="_blank" style="color:var(--gold); font-size:12px;">View Map</a>
+                <div class="fateRevealMeta">2026/3/6 19:00&#10;只要人出現就好💕</div>
+                <a class="linkBtn" id="linkA" target="_blank" style="color:var(--gold); font-size:12px; margin-top:10px;">View Map</a>
               </div>
             </div>
           </div>
@@ -126,20 +150,34 @@
               <div class="fateFace fateBack">
                 <div class="pickBadge">YOU CHOSE</div>
                 <div class="fateRevealTitle">漢來飯店一晚</div>
-                <div class="fateRevealMeta">2026/3/7<br>隔天有島語早餐唷！</div>
-                <a class="linkBtn" id="linkB" target="_blank" style="color:var(--gold); font-size:12px;">View Map</a>
+                <div class="fateRevealMeta">2026/3/7 Check-in&#10;隔天有島語早餐唷！</div>
+                <a class="linkBtn" id="linkB" target="_blank" style="color:var(--gold); font-size:12px; margin-top:10px;">View Map</a>
               </div>
             </div>
           </div>
 
-          <div id="cardC" class="fateFace" style="position:relative; backface-visibility: visible; inset: auto;">
-             <div class="fateRevealTitle">Surprise! 🎁</div>
-             <div class="fateRevealMeta">其實我兩個都訂啦哈哈！<br>所以生日行程就是 A CUT 晚餐 + 漢來飯店住一晚！</div>
-             <div style="margin-top:10px; font-size:12px; color:var(--gold); font-weight:bold;">Happy Birthday, Addie! ❤️</div>
+          <div id="cardC">
+             <div class="fateRevealTitle" style="text-align:center;">Actually... 🎁</div>
+             <div class="fateRevealMeta" style="text-align:center;">其實我兩個都訂啦哈哈！<br>所以生日行程就是 A CUT 晚餐 + 漢來飯店住一晚！</div>
+             
+             <div class="receipt-wrapper">
+               <div class="receipt-box">
+                 <img src="https://via.placeholder.com/300x400?text=A+CUT+Receipt" id="imgA" class="receipt-img">
+                 <div class="stamp">CONFIRMED</div>
+               </div>
+               <div class="receipt-box">
+                 <img src="https://via.placeholder.com/300x400?text=Hotel+Receipt" id="imgB" class="receipt-img">
+                 <div class="stamp">CONFIRMED</div>
+               </div>
+             </div>
+
+             <div style="margin-top:25px; font-family:var(--display); font-size:18px; color:var(--gold); font-weight:bold; text-align:center; letter-spacing:2px;">
+               Happy Birthday, Addie! ❤️
+             </div>
           </div>
         </div>
 
-        <div id="stepActions" style="display:none; gap:10px; justify-content:center;">
+        <div id="stepActions" style="display:none; gap:10px; justify-content:center; margin-top: 25px;">
           <button class="primary" id="revealOtherBtn">看看另一個選項</button>
         </div>
       </div>
@@ -150,65 +188,31 @@
     const CONFIG = {
       to: "Addie",
       targetDate: "2026-03-06T00:00",
-      mapA: "https://www.google.com/maps/search/?api=1&query=A+CUT+牛排館",
-      mapB: "https://www.google.com/maps/search/?api=1&query=台北漢來大飯店"
+      mapA: "https://www.google.com/maps/search/?api=1&query=A+CUT+Steakhouse",
+      mapB: "https://www.google.com/maps/search/?api=1&query=Grand+Hi-Lai+Hotel+Taipei",
+      // ✅ 請在此處替換為你的訂單截圖網址
+      receiptA: "https://via.placeholder.com/300x400?text=A+CUT+Order",
+      receiptB: "https://via.placeholder.com/300x400?text=Hotel+Booking"
     };
 
     let picked = null;
-    let otherRevealed = false;
 
-    // Countdown
-    setInterval(() => {
+    // Countdown Logic
+    function updateCountdown() {
       const diff = new Date(CONFIG.targetDate) - new Date();
-      if (diff < 0) return;
+      if (diff <= 0) return;
       document.getElementById("d").innerText = Math.floor(diff / 86400000);
       document.getElementById("h").innerText = Math.floor((diff % 86400000) / 3600000);
       document.getElementById("m").innerText = Math.floor((diff % 3600000) / 60000);
       document.getElementById("s").innerText = Math.floor((diff % 60000) / 1000);
-    }, 1000);
+    }
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
 
+    // Start Flow
     document.getElementById("openBtn").onclick = () => {
       document.getElementById("title").innerText = "Hi, " + CONFIG.to;
       document.getElementById("openingText").innerText = "選一張卡片，決定你今年生日怎麼過 🥰";
       document.getElementById("flow").style.display = "block";
-      document.getElementById("linkA").href = CONFIG.mapA;
-      document.getElementById("linkB").href = CONFIG.mapB;
       document.getElementById("openBtn").style.display = "none";
-    };
-
-    function handlePick(id) {
-      if (picked) return;
-      picked = id;
-      const card = document.getElementById("card" + id);
-      card.classList.add("revealed", "is-picked");
-      document.getElementById("stepActions").style.display = "flex";
-    }
-
-    document.getElementById("revealOtherBtn").onclick = () => {
-      const otherId = (picked === 'A') ? 'cardB' : 'cardA';
-      document.getElementById(otherId).classList.add("revealed");
-      document.getElementById("revealOtherBtn").style.display = "none";
-      
-      // ✅ 翻開第二張後，延遲顯示 Card C
-      setTimeout(() => {
-        const cardC = document.getElementById("cardC");
-        cardC.classList.add("show");
-        cardC.scrollIntoView({ behavior: "smooth" });
-      }, 1000);
-    };document.getElementById("revealOtherBtn").onclick = () => {
-  const otherId = (picked === 'A') ? 'cardB' : 'cardA';
-  document.getElementById(otherId).classList.add("revealed");
-  document.getElementById("revealOtherBtn").style.display = "none";
-  
-  // ✅ 改為延遲 2.5 秒，讓驚喜感發酵
-  setTimeout(() => {
-    const cardC = document.getElementById("cardC");
-    cardC.classList.add("show");
-    
-    // 平滑滾動到 Card C 的位置
-    cardC.scrollIntoView({ behavior: "smooth", block: "center" });
-  }, 2500); 
-};
-  </script>
-</body>
-</html>
+      document

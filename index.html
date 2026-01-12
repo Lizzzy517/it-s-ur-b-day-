@@ -4,184 +4,143 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Birthday Fate Cards</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Cormorant+Garamond:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Cormorant+Garamond:wght@400;600&display=swap" rel="stylesheet">
 
   <style>
     :root{
-      --bg1:#0b1020;
-      --bg2:#130b2b;
-      --text:rgba(255,255,255,.92);
-      --muted:rgba(255,255,255,.68);
-      --accent:#8b5cf6;
-      --accent2:#22c55e;
-      --shadow: 0 18px 60px rgba(0,0,0,.45);
-      --radius: 22px;
-      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      --sans: "Cormorant Garamond", ui-serif, Georgia, serif;
-      --display: "Cinzel", ui-serif, Georgia, serif;
-      --gold: #d8b25c;
+      --bg1:#0b1020; --text:rgba(255,255,255,.92);
+      --gold: #d8b25c; --radius: 22px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --display: "Cinzel", serif;
     }
 
-    *{box-sizing:border-box}
-    html,body{height:100%}
-
-    body{
-      margin:0;
-      font-family:var(--sans);
-      color:var(--text);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:24px;
-      overflow-x:hidden;
-      background:
-        radial-gradient(1200px 900px at 20% 10%, rgba(216,178,92,.10), transparent 55%),
-        radial-gradient(900px 700px at 80% 30%, rgba(139,92,246,.22), transparent 60%),
-        radial-gradient(800px 600px at 60% 90%, rgba(34,197,94,.12), transparent 60%),
-        linear-gradient(180deg, #070a14, #0c0720);
+    body {
+      margin: 0; font-family: "Cormorant Garamond", serif; color: var(--text);
+      display: flex; align-items: center; justify-content: center; min-height: 100vh;
+      background: radial-gradient(circle at center, #130b2b, #070a14); padding: 20px;
     }
 
-    .wrap{width:min(860px, 100%);}
-    h1{ font-family: var(--display); margin:0 0 10px; font-size:clamp(24px, 4vw, 36px); }
-    .sub{ margin:0 0 16px; color: rgba(255,255,255,.75); font-size:15px; white-space:pre-wrap; }
-
-    .card{
-      position:relative; border-radius:var(--radius);
-      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
-      border: 1px solid rgba(216,178,92,.35); box-shadow:var(--shadow); padding:28px;
+    .wrap { width: min(860px, 100%); }
+    .card-container {
+      position: relative; border-radius: var(--radius); padding: 28px;
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(216,178,92,0.3);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
     }
 
-    .panel{ border-radius:18px; border: 1px solid rgba(216,178,92,.22); background: rgba(0,0,0,.25); padding:14px; }
-    .countdown{ margin:14px 0 10px; display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
-    .tile{ border-radius:18px; border: 1px solid rgba(216,178,92,.22); background: rgba(0,0,0,.26); padding:14px 12px; text-align:center; }
-    .num{ font-family:var(--mono); font-size:22px; font-weight:850; }
-    .label{ font-size:12px; color: var(--gold); }
+    .countdown { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 20px 0; }
+    .tile { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 15px; text-align: center; border: 1px solid rgba(216,178,92,0.2); }
+    .num { font-family: var(--mono); font-size: 24px; font-weight: bold; display: block; }
+    .label { font-size: 12px; color: var(--gold); }
 
-    .actions{ display:flex; flex-wrap:wrap; gap:10px; margin-top:12px; }
-    button{ border:0; cursor:pointer; border-radius:14px; padding:12px 14px; font-weight:750; color:var(--text); background:rgba(255,255,255,.1); }
-    .primary{ background: linear-gradient(135deg, rgba(216,178,92,.9), rgba(139,92,246,.75)); }
-
-    /* Fate Cards */
-    .cards{ margin-top:12px; display:grid; grid-template-columns: repeat(2, 1fr); gap:12px; perspective: 1000px; }
-    .fate{ position:relative; min-height:160px; transition: transform 0.6s; transform-style: preserve-3d; cursor:pointer; }
-    .fateInner{ position:relative; width:100%; height:100%; transform-style: preserve-3d; transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
-    .fate.revealed .fateInner{ transform: rotateY(180deg); }
-
-    .fateFace{
-      position:absolute; inset:0; backface-visibility: hidden; -webkit-backface-visibility: hidden;
-      border-radius:20px; border: 1px solid rgba(216,178,92,.3); padding:16px;
-      display:flex; flex-direction:column; justify-content:space-between; background: rgba(0,0,0,.3);
-    }
-    .fateBack{ transform: rotateY(180deg); background: rgba(20, 10, 40, 0.5); }
-
-/* ✅ 基礎樣式：預設隱藏且準備好旋轉 */
-.pickBadge {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  padding: 4px 10px;
-  border-radius: 8px;
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 800;
-  color: #000;
-  background: var(--gold);
-  z-index: 20; /* 確保在最上層 */
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.4s ease;
-  
-  /* 關鍵 1：讓徽章本身不參與父層的背面隱藏 */
-  backface-visibility: visible;
-  -webkit-backface-visibility: visible;
-}
-
-/* ✅ 當父層翻轉後，修正鏡像問題 */
-.fate.revealed .pickBadge {
-  /* 關鍵 2：父層轉了 180 度，我們也跟著轉 180 度，負負得正字就會變回來 */
-  transform: rotateY(180deg);
-}
-    .fateTitle{ font-weight:900; font-family:var(--display); font-size:16px; color:var(--gold); }
-    .fateHint{ font-size:13px; color:rgba(255,255,255,.6); margin-top:5px; }
-    .spark{ position:absolute; bottom:15px; left:15px; font-size:11px; color:var(--gold); font-family:var(--mono); }
+    .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; perspective: 1200px; }
     
-    .fateRevealTitle { font-family: var(--display); font-size: 18px; margin-bottom: 5px; color: var(--gold); }
-    .fateRevealMeta { font-size: 13px; line-height: 1.5; white-space: pre-wrap; }
-    .linkBtn { font-size: 12px; color: var(--gold); text-decoration: underline; margin-top: 10px; }
-
-    .confetti{position:fixed;inset:0;pointer-events:none;z-index:999;display:none;}
-    .confetti span{position:absolute;width:10px;height:10px;animation:fall 1.5s linear forwards;}
-    @keyframes fall{to{transform:translateY(100vh) rotate(720deg);}}
-
-    @media (max-width: 560px){
-      .cards{grid-template-columns: 1fr;}
-      .countdown{grid-template-columns: repeat(2, 1fr);}
+    /* 3D Card */
+    .fate { position: relative; height: 180px; cursor: pointer; }
+    .fateInner {
+      position: relative; width: 100%; height: 100%;
+      transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+      transform-style: preserve-3d;
     }
+    .fate.revealed .fateInner { transform: rotateY(180deg); }
+
+    .fateFace {
+      position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      border-radius: 20px; border: 1px solid rgba(216,178,92,0.3); padding: 20px;
+      display: flex; flex-direction: column; justify-content: space-between;
+      background: rgba(15, 15, 25, 0.9);
+    }
+
+    .fateBack { transform: rotateY(180deg); background: rgba(25, 20, 45, 0.95); }
+
+    /* Badge */
+    .pickBadge {
+      position: absolute; top: 12px; right: 12px;
+      padding: 4px 10px; border-radius: 6px;
+      background: var(--gold); color: #000;
+      font-family: var(--mono); font-size: 10px; font-weight: 900;
+      opacity: 0; transition: opacity 0.4s ease 0.6s; z-index: 5;
+    }
+    .fate.is-picked .pickBadge { opacity: 1; }
+
+    /* Card C Specific - 特別驚喜樣式 */
+    #cardC { 
+      grid-column: 1 / -1; height: auto; min-height: 120px; 
+      display: none; opacity: 0; transform: translateY(20px);
+      transition: all 0.8s ease; 
+      background: linear-gradient(135deg, rgba(216,178,92,0.2), rgba(139,92,246,0.2));
+      border: 2px solid var(--gold);
+    }
+    #cardC.show { display: block; opacity: 1; transform: translateY(0); }
+
+    .fateTitle { font-family: var(--display); font-size: 18px; color: var(--gold); margin: 0; }
+    .fateRevealTitle { font-family: var(--display); font-size: 20px; color: var(--gold); margin-bottom: 8px; }
+    .fateRevealMeta { font-size: 14px; line-height: 1.6; color: rgba(255,255,255,0.9); }
+
+    button { 
+      padding: 12px 20px; border-radius: 12px; border: none; cursor: pointer;
+      font-weight: bold; background: rgba(255,255,255,0.1); color: white; margin-top: 15px;
+    }
+    .primary { background: linear-gradient(135deg, var(--gold), #8b5cf6); }
+
+    @media (max-width: 500px) { .cards { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
-  <div class="confetti" id="confetti"></div>
 
   <main class="wrap">
-    <section class="card">
+    <section class="card-container">
       <h1 id="title">Hey ✨</h1>
-      <p class="sub" id="subtitle"></p>
-
-      <div class="panel">
-        <div class="countdown">
-          <div class="tile"><div class="num" id="d">--</div><div class="label">days</div></div>
-          <div class="tile"><div class="num" id="h">--</div><div class="label">hours</div></div>
-          <div class="tile"><div class="num" id="m">--</div><div class="label">mins</div></div>
-          <div class="tile"><div class="num" id="s">--</div><div class="label">secs</div></div>
-        </div>
-        <div id="dateLine" style="font-size:12px; opacity:0.6; margin-top:10px;"></div>
-        <div class="actions">
-          <button class="primary" id="openBtn">Open</button>
-        </div>
+      <div class="countdown">
+        <div class="tile"><span class="num" id="d">0</span><span class="label">days</span></div>
+        <div class="tile"><span class="num" id="h">0</span><span class="label">hours</span></div>
+        <div class="tile"><span class="num" id="m">0</span><span class="label">mins</span></div>
+        <div class="tile"><span class="num" id="s">0</span><span class="label">secs</span></div>
       </div>
+      <button class="primary" id="openBtn">Open Invitation</button>
 
-      <div id="flow" style="display:none; margin-top:20px;">
-        <p class="sub" id="openingText"></p>
+      <div id="flow" style="display:none; margin-top:30px;">
+        <p id="openingText" style="margin-bottom:20px;"></p>
+        
         <div class="cards">
-          <div class="fate" id="cardA">
+          <div class="fate" id="cardA" onclick="handlePick('A')">
             <div class="fateInner">
               <div class="fateFace fateFront">
-                <div>
-                  <div class="fateTitle">Card A</div>
-                  <div class="fateHint">選中的將會優先揭曉。</div>
-                </div>
-                <div class="spark">✦ tap to pick</div>
+                <div><p class="fateTitle">Card A</p></div>
+                <div style="font-size:12px; color:var(--gold);">✦ tap to pick</div>
               </div>
               <div class="fateFace fateBack">
-                <div class="fateRevealTitle"></div>
-                <div class="fateRevealMeta"></div>
-                <a class="linkBtn fateRevealLink" target="_blank">Open map</a>
+                <div class="pickBadge">YOU CHOSE</div>
+                <div class="fateRevealTitle">A CUT · 國賓</div>
+                <div class="fateRevealMeta">2026/3/6 19:00<br>只要人出現就好💕</div>
+                <a class="linkBtn" id="linkA" target="_blank" style="color:var(--gold); font-size:12px;">View Map</a>
               </div>
             </div>
           </div>
-          <div class="fate" id="cardB">
+
+          <div class="fate" id="cardB" onclick="handlePick('B')">
             <div class="fateInner">
               <div class="fateFace fateFront">
-                <div>
-                  <div class="fateTitle">Card B</div>
-                  <div class="fateHint">另一種可能性。</div>
-                </div>
-                <div class="spark">✦ tap to pick</div>
+                <div><p class="fateTitle">Card B</p></div>
+                <div style="font-size:12px; color:var(--gold);">✦ tap to pick</div>
               </div>
               <div class="fateFace fateBack">
-                <div class="fateRevealTitle"></div>
-                <div class="fateRevealMeta"></div>
-                <a class="linkBtn fateRevealLink" target="_blank">Open map</a>
+                <div class="pickBadge">YOU CHOSE</div>
+                <div class="fateRevealTitle">漢來飯店一晚</div>
+                <div class="fateRevealMeta">2026/3/7<br>隔天有島語早餐唷！</div>
+                <a class="linkBtn" id="linkB" target="_blank" style="color:var(--gold); font-size:12px;">View Map</a>
               </div>
             </div>
+          </div>
+
+          <div id="cardC" class="fateFace" style="position:relative; backface-visibility: visible; inset: auto;">
+             <div class="fateRevealTitle">Surprise! 🎁</div>
+             <div class="fateRevealMeta">其實我兩個都訂啦哈哈！<br>所以生日行程就是 A CUT 晚餐 + 漢來飯店住一晚！</div>
+             <div style="margin-top:10px; font-size:12px; color:var(--gold); font-weight:bold;">Happy Birthday, Addie! ❤️</div>
           </div>
         </div>
 
-        <div class="actions" id="stepActions" style="display:none; margin-top:20px;">
-          <button class="primary" id="revealOtherBtn">看看另一張卡</button>
-          <button id="resetBtn">重選一次</button>
+        <div id="stepActions" style="display:none; gap:10px; justify-content:center;">
+          <button class="primary" id="revealOtherBtn">看看另一個選項</button>
         </div>
       </div>
     </section>
@@ -190,95 +149,53 @@
   <script>
     const CONFIG = {
       to: "Addie",
-      from: "Liz",
-      countdownTo: "2026-03-06T00:00",
-      openingText: "嘿嘿，選一張卡片吧！\n這將決定你今年生日的命運 ✨",
-      cardA: { title: "A CUT · 國賓", dateLabel: "2026/3/6", time: "19:00", note: "只要人出現就好💕", mapUrl: "https://maps.app.goo.gl/YyZ9L" },
-      cardB: { title: "漢來飯店一晚", dateLabel: "2026/3/7", time: "Check-in 待定", note: "隔天還有島語早餐唷！", mapUrl: "https://maps.app.goo.gl/hotel" }
+      targetDate: "2026-03-06T00:00",
+      mapA: "https://www.google.com/maps/search/?api=1&query=A+CUT+牛排館",
+      mapB: "https://www.google.com/maps/search/?api=1&query=台北漢來大飯店"
     };
 
-    const el = id => document.getElementById(id);
+    let picked = null;
+    let otherRevealed = false;
 
-    function init() {
-      el("title").textContent = "Hi, " + CONFIG.to;
-      el("subtitle").textContent = "From: " + CONFIG.from + "\n距離生日還有：";
-      el("openingText").textContent = CONFIG.openingText;
+    // Countdown
+    setInterval(() => {
+      const diff = new Date(CONFIG.targetDate) - new Date();
+      if (diff < 0) return;
+      document.getElementById("d").innerText = Math.floor(diff / 86400000);
+      document.getElementById("h").innerText = Math.floor((diff % 86400000) / 3600000);
+      document.getElementById("m").innerText = Math.floor((diff % 3600000) / 60000);
+      document.getElementById("s").innerText = Math.floor((diff % 60000) / 1000);
+    }, 1000);
 
-      // Countdown logic
-      const target = new Date(CONFIG.countdownTo).getTime();
-      setInterval(() => {
-        const now = new Date().getTime();
-        const diff = target - now;
-        if (diff < 0) return;
-        el("d").textContent = Math.floor(diff / 86400000);
-        el("h").textContent = Math.floor((diff % 86400000) / 3600000);
-        el("m").textContent = Math.floor((diff % 3600000) / 60000);
-        el("s").textContent = Math.floor((diff % 60000) / 1000);
-      }, 1000);
+    document.getElementById("openBtn").onclick = () => {
+      document.getElementById("title").innerText = "Hi, " + CONFIG.to;
+      document.getElementById("openingText").innerText = "選一張卡片，決定你今年生日怎麼過 🥰";
+      document.getElementById("flow").style.display = "block";
+      document.getElementById("linkA").href = CONFIG.mapA;
+      document.getElementById("linkB").href = CONFIG.mapB;
+      document.getElementById("openBtn").style.display = "none";
+    };
 
-      el("openBtn").addEventListener("click", () => {
-        el("flow").style.display = "block";
-        el("flow").scrollIntoView({ behavior: "smooth" });
-      });
-
-      let picked = null;
-
-function addBadge(cardId) {
-  const card = el(cardId);
-  // 如果已經有徽章了就不重複加
-  if (card.querySelector(".pickBadge")) return;
-
-  const badge = document.createElement("div");
-  badge.className = "pickBadge";
-  badge.textContent = "YOU CHOSE";
-  
-  // 先把徽章塞進 card (最外層)
-  card.appendChild(badge);
-
-  // ✅ 延遲顯現，配合翻轉動畫
-  setTimeout(() => {
-    badge.style.opacity = "1";
-  }, 700); // 稍微晚一點點，等卡片翻過來之後再浮現
-}
-      function reveal(cardId, data) {
-        const card = el(cardId);
-        card.querySelector(".fateRevealTitle").textContent = data.title;
-        card.querySelector(".fateRevealMeta").textContent = `${data.dateLabel}\n${data.time}\n${data.note}`;
-        card.querySelector(".fateRevealLink").href = data.mapUrl;
-        
-        // 移除 tap to pick
-        const spark = card.querySelector(".spark");
-        if(spark) spark.remove();
-
-        card.classList.add("revealed");
-      }
-
-      el("cardA").onclick = () => {
-        if (picked) return;
-        picked = "A";
-        addBadge("cardA");
-        reveal("cardA", CONFIG.cardA);
-        el("stepActions").style.display = "flex";
-      };
-
-      el("cardB").onclick = () => {
-        if (picked) return;
-        picked = "B";
-        addBadge("cardB");
-        reveal("cardB", CONFIG.cardB);
-        el("stepActions").style.display = "flex";
-      };
-
-      el("revealOtherBtn").onclick = () => {
-        if (picked === "A") reveal("cardB", CONFIG.cardB);
-        else reveal("cardA", CONFIG.cardA);
-        el("revealOtherBtn").style.display = "none";
-      };
-
-      el("resetBtn").onclick = () => location.reload();
+    function handlePick(id) {
+      if (picked) return;
+      picked = id;
+      const card = document.getElementById("card" + id);
+      card.classList.add("revealed", "is-picked");
+      document.getElementById("stepActions").style.display = "flex";
     }
 
-    init();
+    document.getElementById("revealOtherBtn").onclick = () => {
+      const otherId = (picked === 'A') ? 'cardB' : 'cardA';
+      document.getElementById(otherId).classList.add("revealed");
+      document.getElementById("revealOtherBtn").style.display = "none";
+      
+      // ✅ 翻開第二張後，延遲顯示 Card C
+      setTimeout(() => {
+        const cardC = document.getElementById("cardC");
+        cardC.classList.add("show");
+        cardC.scrollIntoView({ behavior: "smooth" });
+      }, 1000);
+    };
   </script>
 </body>
 </html>

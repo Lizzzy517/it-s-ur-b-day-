@@ -86,8 +86,13 @@
       z-index: 10; pointer-events: none;
       backface-visibility: visible;
     }
-    /* 翻轉後修正鏡像並保持在右上角 */
-    .fate.revealed .pickBadge { transform: rotateY(180deg); }
+/* ✅ 確保翻轉後的徽章定位在背面的右上角，且文字方向正確 */
+.fate.revealed .pickBadge { 
+  transform: rotateY(180deg); 
+  opacity: 1;
+  top: 15px;
+  right: 15px;
+}
 
     .fateTitle{ font-weight:900; font-family:var(--display); font-size:16px; color:var(--gold); }
     .fateHint{ font-size:13px; color:rgba(255,255,255,.6); margin-top:5px; }
@@ -209,15 +214,24 @@
 
       let picked = null;
 
-      function addBadge(cardId) {
-        const card = el(cardId);
-        if (card.querySelector(".pickBadge")) return;
-        const badge = document.createElement("div");
-        badge.className = "pickBadge";
-        badge.textContent = "YOU CHOSE";
-        card.appendChild(badge);
-      }
+function addBadge(cardId) {
+  const card = el(cardId);
+  if (card.querySelector(".pickBadge")) return;
 
+  const badge = document.createElement("div");
+  badge.className = "pickBadge";
+  badge.textContent = "YOU CHOSE";
+  // 初始設為透明，等卡片翻完再顯示
+  badge.style.opacity = "0";
+  badge.style.transition = "opacity 0.4s ease";
+  
+  card.appendChild(badge);
+
+  // ✅ 延遲 600ms (等卡片轉到一半以上時) 再顯現
+  setTimeout(() => {
+    badge.style.opacity = "1";
+  }, 600);
+}
       function reveal(cardId, data) {
         const card = el(cardId);
         card.querySelector(".fateRevealTitle").textContent = data.title;

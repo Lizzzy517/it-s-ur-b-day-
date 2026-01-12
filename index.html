@@ -260,7 +260,38 @@
       100%{ transform: scale(1); }
     }
 
-.pickBadge{
+/* 1. 確保徽章在翻轉過程中與翻轉後都看得到 */
+.pickBadge {
+  position: absolute;
+  top: -10px;    /* 稍微往上飄出邊框一點，增加設計感 */
+  right: -5px;   /* 靠右 */
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: #000;
+  background: var(--gold); /* 使用你定義的金黃色，更醒目 */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  z-index: 10;
+  pointer-events: none;
+  /* 關鍵：防止徽章跟著父層翻轉而文字變反 */
+  backface-visibility: visible; 
+}
+
+/* 2. 當父層 .fate 翻轉時，徽章要「轉回來」才不會變鏡像文字 */
+.fate.revealed .pickBadge {
+  transform: rotateY(180deg); 
+  top: 10px;    /* 翻轉後回到卡片內右上角 */
+  right: 10px;
+}
+
+/* 3. 翻轉後隱藏原本正面的所有文字內容與提示 */
+.fate.revealed .fateFront * {
+  opacity: 0;
+  pointer-events: none;
+}.pickBadge{
   position:absolute;
   top:14px;
   right:14px;   /* ✅ 改成右上 */
@@ -628,8 +659,21 @@ function addPickBadge(which){
 
 
 function revealInCard(cardEl, data){
-  cardEl.classList.add("revealed"); // ✅ 這行會觸發翻面
+function addPickBadge(which) {
+  const pickedEl = which === "A" ? cardA : cardB;
+  const old = pickedEl.querySelector(".pickBadge");
+  if (old) old.remove();
 
+  // 將徽章直接加在 fate 本體上，而不是 fateFront 裡面
+  // 這樣它才不會隨著 fateFront 一起被隱藏
+  const badge = document.createElement("div");
+  badge.className = "pickBadge";
+  badge.textContent = "YOU CHOSE";
+  pickedEl.appendChild(badge);
+}
+
+function revealInCard(cardEl, data) {
+  // 1. 填充內容
   const t = cardEl.querySelector(".fateBack .fateRevealTitle");
   const m = cardEl.querySelector(".fateBack .fateRevealMeta");
   const a = cardEl.querySelector(".fateBack .fateRevealLink");
@@ -637,22 +681,22 @@ function revealInCard(cardEl, data){
   if (t) t.textContent = data.title || "";
   if (m) m.textContent = (data.dateLabel || "") + "\n" + (data.time || "") + "\n" + (data.note || "");
 
-  if (a){
-    if (data.mapUrl){
+  // 2. 移除 tap to pick (spark)
+  const spark = cardEl.querySelector(".spark");
+  if (spark) spark.remove(); // 直接從 DOM 移除，保證消失
+
+  // 3. 執行翻轉
+  cardEl.classList.add("revealed");
+
+  if (a) {
+    if (data.mapUrl) {
       a.href = data.mapUrl;
-      a.style.opacity = "1";
-      a.style.pointerEvents = "auto";
-      a.onclick = null;
+      a.style.display = "inline-block";
     } else {
-      a.href = "#";
-      a.onclick = (e) => { e.preventDefault(); alert("我還沒把地圖連結貼上去 😶"); };
-      a.style.opacity = ".85";
-      a.style.pointerEvents = "auto";
+      a.style.display = "none";
     }
   }
 }
-
-
     function onPick(which){
       if (step !== 0) return;
 

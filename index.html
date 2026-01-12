@@ -28,16 +28,13 @@
       box-shadow: 0 20px 50px rgba(0,0,0,0.5);
     }
 
-    /* Countdown Tiles */
     .countdown { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 20px 0; }
     .tile { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 15px; text-align: center; border: 1px solid rgba(216,178,92,0.2); }
     .num { font-family: var(--mono); font-size: 24px; font-weight: bold; display: block; }
     .label { font-size: 12px; color: var(--gold); }
 
-    /* Cards Layout */
     .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; perspective: 1200px; }
     
-    /* 3D Flip Logic */
     .fate { position: relative; height: 200px; cursor: pointer; }
     .fateInner {
       position: relative; width: 100%; height: 100%;
@@ -55,7 +52,6 @@
 
     .fateBack { transform: rotateY(180deg); background: rgba(25, 20, 45, 0.98); }
 
-    /* "YOU CHOSE" Badge on Back */
     .pickBadge {
       position: absolute; top: 12px; right: 12px;
       padding: 4px 10px; border-radius: 6px;
@@ -65,7 +61,6 @@
     }
     .fate.is-picked .pickBadge { opacity: 1; }
 
-    /* Card C Specific */
     #cardC { 
       grid-column: 1 / -1; height: auto; display: none; opacity: 0; 
       transform: translateY(30px); margin-top: 20px;
@@ -75,7 +70,6 @@
     }
     #cardC.show { display: block; opacity: 1; transform: translateY(0); }
 
-    /* Receipt & Stamp */
     .receipt-wrapper { display: flex; gap: 15px; margin-top: 20px; justify-content: center; }
     .receipt-box { position: relative; width: 45%; max-width: 180px; }
     .receipt-img { 
@@ -89,7 +83,6 @@
       opacity: 0.9; background: rgba(0,0,0,0.2); pointer-events: none;
     }
 
-    /* Text & Buttons */
     .fateTitle { font-family: var(--display); font-size: 18px; color: var(--gold); margin: 0; }
     .fateRevealTitle { font-family: var(--display); font-size: 20px; color: var(--gold); margin-bottom: 8px; }
     .fateRevealMeta { font-size: 14px; white-space: pre-line; color: rgba(255,255,255,0.9); }
@@ -135,7 +128,8 @@
               <div class="fateFace fateBack">
                 <div class="pickBadge">YOU CHOSE</div>
                 <div class="fateRevealTitle">A CUT · 國賓</div>
-                <div class="fateRevealMeta">2026/3/6 19:00&#10;只要人出現就好💕</div>
+                <div class="fateRevealMeta">2026/3/6 19:00
+只要人出現就好💕</div>
                 <a class="linkBtn" id="linkA" target="_blank" style="color:var(--gold); font-size:12px; margin-top:10px;">View Map</a>
               </div>
             </div>
@@ -150,7 +144,8 @@
               <div class="fateFace fateBack">
                 <div class="pickBadge">YOU CHOSE</div>
                 <div class="fateRevealTitle">漢來飯店一晚</div>
-                <div class="fateRevealMeta">2026/3/7 Check-in&#10;隔天有島語早餐唷！</div>
+                <div class="fateRevealMeta">2026/3/7 Check-in
+隔天有島語早餐唷！</div>
                 <a class="linkBtn" id="linkB" target="_blank" style="color:var(--gold); font-size:12px; margin-top:10px;">View Map</a>
               </div>
             </div>
@@ -162,11 +157,11 @@
              
              <div class="receipt-wrapper">
                <div class="receipt-box">
-                 <img src="https://via.placeholder.com/300x400?text=A+CUT+Receipt" id="imgA" class="receipt-img">
+                 <img src="" id="imgA" class="receipt-img">
                  <div class="stamp">CONFIRMED</div>
                </div>
                <div class="receipt-box">
-                 <img src="https://via.placeholder.com/300x400?text=Hotel+Receipt" id="imgB" class="receipt-img">
+                 <img src="" id="imgB" class="receipt-img">
                  <div class="stamp">CONFIRMED</div>
                </div>
              </div>
@@ -188,16 +183,14 @@
     const CONFIG = {
       to: "Addie",
       targetDate: "2026-03-06T00:00",
-      mapA: "https://maps.app.goo.gl/X3hRzJyyoy24pzzc8k",
-      mapB: "https://maps.app.goo.gl/sDxQVvX3eKEVNfQe7",
-      // ✅ 請在此處替換為你的訂單截圖網址
-      receiptA: "https://via.placeholder.com/300x400?text=A+CUT+https://cdn.discordapp.com/attachments/1460123547338018914/1460123602325209098/IMG_4079.png?ex=6965c592&is=69647412&hm=8b060796d1d305eb8641c0a8621d57d497b2635c6b9f5a1a26da028772f89fa6&Order",
-      receiptB: "https://cdn.discordapp.com/attachments/1460123547338018914/1460123603076120728/IMG_4080.png?ex=6965c592&is=69647412&hm=cb1e0b40bee9b802592485634b456219cadeb4597b98288a155ee7cae9248a47&oking"
+      mapA: "https://maps.app.goo.gl/B9p6p6uH2g7w7w7w8",
+      mapB: "https://maps.app.goo.gl/C9p6p6uH2g7w7w7w9",
+      receiptA: "https://cdn.discordapp.com/attachments/1460123547338018914/1460123602325209098/IMG_4079.png?ex=6965c592&is=69647412&hm=8b060796d1d305eb8641c0a8621d57d497b2635c6b9f5a1a26da028772f89fa6&",
+      receiptB: "https://cdn.discordapp.com/attachments/1460123547338018914/1460123603076120728/IMG_4080.png?ex=6965c592&is=69647412&hm=cb1e0b40bee9b802592485634b456219cadeb4597b98288a155ee7cae9248a47&"
     };
 
     let picked = null;
 
-    // Countdown Logic
     function updateCountdown() {
       const diff = new Date(CONFIG.targetDate) - new Date();
       if (diff <= 0) return;
@@ -209,10 +202,37 @@
     setInterval(updateCountdown, 1000);
     updateCountdown();
 
-    // Start Flow
     document.getElementById("openBtn").onclick = () => {
       document.getElementById("title").innerText = "Hi, " + CONFIG.to;
       document.getElementById("openingText").innerText = "選一張卡片，決定你今年生日怎麼過 🥰";
       document.getElementById("flow").style.display = "block";
       document.getElementById("openBtn").style.display = "none";
-      document
+      document.getElementById("linkA").href = CONFIG.mapA;
+      document.getElementById("linkB").href = CONFIG.mapB;
+      document.getElementById("imgA").src = CONFIG.receiptA;
+      document.getElementById("imgB").src = CONFIG.receiptB;
+    };
+
+    function handlePick(id) {
+      if (picked) return;
+      picked = id;
+      document.getElementById("card" + id).classList.add("revealed", "is-picked");
+      document.getElementById("stepActions").style.display = "flex";
+    }
+
+    document.getElementById("revealOtherBtn").onclick = () => {
+      const otherId = (picked === 'A') ? 'cardB' : 'cardA';
+      document.getElementById(otherId).classList.add("revealed");
+      document.getElementById("revealOtherBtn").style.display = "none";
+      setTimeout(() => {
+        const cardC = document.getElementById("cardC");
+        cardC.style.display = "block";
+        setTimeout(() => {
+          cardC.classList.add("show");
+          cardC.scrollIntoView({ behavior: "smooth", block: "center" });
+        }, 100);
+      }, 3000);
+    };
+  </script>
+</body>
+</html>
